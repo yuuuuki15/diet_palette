@@ -62,27 +62,23 @@
         <div class="results-content">
           <h2 data-i18n="resultTitle" class="results-title"></h2>
 
-          <!-- Radar Chart -->
+          <!-- Radar Chart (user polygon only by default) -->
           <div class="radar-section">
             <div id="radar-chart" class="radar-chart"></div>
             <div id="radar-legend" class="radar-legend"></div>
-            <p class="compare-hint" data-i18n="compareLabel"></p>
-            <div id="profile-selectors" class="profile-selectors"></div>
           </div>
 
-          <!-- Top Match -->
-          <div class="top-result-card">
-            <span id="top-result-label" class="top-label"></span>
-            <div class="top-main">
-              <span id="top-result-name" class="top-name"></span>
-              <span id="top-result-percent" class="top-percent"></span>
-            </div>
-            <p id="top-result-desc" class="top-desc"></p>
+          <!-- Dimension Insights (top 3 values) -->
+          <div class="dimension-insights-section">
+            <h3 data-i18n="dimensionInsightsTitle" class="section-label"></h3>
+            <div id="dimension-insights" class="dimension-insights"></div>
           </div>
 
-          <!-- All Matches -->
-          <h3 data-i18n="allMatchesLabel" class="section-label"></h3>
-          <div id="result-bars" class="result-bars"></div>
+          <!-- Dietary Philosophy Cards -->
+          <div class="dietary-philosophies-section">
+            <h3 data-i18n="dietaryPhilosophiesTitle" class="section-label"></h3>
+            <div id="philosophy-cards" class="philosophy-cards"></div>
+          </div>
 
           <!-- Reducetarian Scale -->
           <div class="reducetarian-section">

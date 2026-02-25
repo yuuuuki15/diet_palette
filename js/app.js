@@ -86,7 +86,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // ── Radar Chart ──
 
   function renderRadarChart(userVector, compareKey) {
-    const compareProfile = PROFILES[compareKey];
+    const compareProfile = compareKey ? PROFILES[compareKey] : null;
     const w = 460;
     const h = 400;
     const cx = 230;
@@ -139,12 +139,15 @@ document.addEventListener("DOMContentLoaded", () => {
         font-family="Inter, Noto Sans JP, sans-serif">${t("dimensions." + d)}</text>`;
     });
 
-    // Compare profile polygon
-    const color = PROFILE_COLORS[compareKey];
-    const comparePoly = `<polygon points="${polyPoints(compareProfile)}"
-      fill="${color}" fill-opacity="0.1"
-      stroke="${color}" stroke-width="1.5"
-      stroke-dasharray="6 3" />`;
+    // Compare profile polygon (only if compareKey is set)
+    let comparePoly = "";
+    if (compareProfile && compareKey) {
+      const color = PROFILE_COLORS[compareKey];
+      comparePoly = `<polygon points="${polyPoints(compareProfile)}"
+        fill="${color}" fill-opacity="0.1"
+        stroke="${color}" stroke-width="1.5"
+        stroke-dasharray="6 3" />`;
+    }
 
     // User polygon
     const userPoly = `<polygon points="${polyPoints(userVector)}"
@@ -164,104 +167,162 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.getElementById("radar-chart").innerHTML = svg;
 
-    // Legend
-    document.getElementById("radar-legend").innerHTML = `
+    // Legend - conditionally show comparison
+    let legendHTML = `
       <span class="legend-item">
         <span class="legend-swatch" style="background:#2d6a4f"></span>
         ${t("radarYou")}
       </span>
-      <span class="legend-item">
-        <span class="legend-swatch legend-dashed" style="border-color:${color}"></span>
-        ${t("radarMatch")}: ${t("categories." + compareKey)}
-      </span>
     `;
+    if (compareKey) {
+      const color = PROFILE_COLORS[compareKey];
+      legendHTML += `
+        <span class="legend-item">
+          <span class="legend-swatch legend-dashed" style="border-color:${color}"></span>
+          ${t("radarMatch")}: ${t("categories." + compareKey)}
+        </span>
+      `;
+    }
+    document.getElementById("radar-legend").innerHTML = legendHTML;
   }
 
-  // ── Profile Selectors (Comparison Feature) ──
+  // ── Dimension Insights ──
 
-  function renderProfileSelectors(results, activeKey) {
-    const container = document.getElementById("profile-selectors");
+  function renderDimensionInsights(userVector) {
+    const topDims = getTopDimensions(userVector, 3);
+    const container = document.getElementById("dimension-insights");
     container.innerHTML = "";
 
-    results.forEach(({ key, similarity }) => {
-      const btn = document.createElement("button");
-      btn.className = "profile-chip" + (key === activeKey ? " active" : "");
-      const color = PROFILE_COLORS[key];
-      btn.innerHTML = `
-        <span class="chip-dot" style="background:${color}"></span>
-        <span class="chip-name">${t("categories." + key)}</span>
-        <span class="chip-sim">${similarity}%</span>
+    topDims.forEach(({ dim, score }) => {
+      const card = document.createElement("div");
+      card.className = "insight-card";
+      const percentage = Math.round(score * 100);
+      card.innerHTML = `
+        <div class="insight-header">
+          <span class="insight-dim-name">${t("dimensions." + dim)}</span>
+          <span class="insight-score">${percentage}%</span>
+        </div>
+        <p class="insight-text">${t("dimensionInsights." + dim)}</p>
       `;
-      btn.addEventListener("click", () => {
-        selectedCompare = key;
-        renderRadarChart(lastUserVector, key);
-        renderProfileSelectors(lastResults, key);
-      });
-      container.appendChild(btn);
+      container.appendChild(card);
     });
+  }
+
+  // ── Dietary Philosophy Cards ──
+
+  function renderPhilosophyCards(results, userVector) {
+    const container = document.getElementById("philosophy-cards");
+    container.innerHTML = "";
+
+    results.forEach(({ key, similarity, subtype }) => {
+      const color = PROFILE_COLORS[key];
+      const isComparing = selectedCompare === key;
+
+      const card = document.createElement("div");
+      card.className = "philosophy-card" + (isComparing ? " comparing" : "");
+      card.style.borderLeftColor = color;
+
+      let subtypeHTML = "";
+      if (subtype) {
+        const info = t("subtypes." + subtype.key);
+        if (info && typeof info === "object") {
+          subtypeHTML = `
+            <div class="subtype-badge">
+              <span class="subtype-name">${info.name}</span>
+            </div>
+            <p class="subtype-desc">${info.desc}</p>
+          `;
+        }
+      }
+
+      card.innerHTML = `
+        <div class="philosophy-card-header">
+          <div class="philosophy-card-title">
+            <span class="philosophy-dot" style="background:${color}"></span>
+            <span class="philosophy-name">${t("categories." + key)}</span>
+          </div>
+          <span class="philosophy-similarity">${similarity}%</span>
+        </div>
+        ${subtypeHTML}
+        <button class="compare-toggle-btn ${isComparing ? "active" : ""}"
+                data-profile="${key}">
+          ${isComparing ? t("comparingButton") : t("compareButton")}
+        </button>
+      `;
+
+      const btn = card.querySelector(".compare-toggle-btn");
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        if (selectedCompare === key) {
+          selectedCompare = null;
+          renderRadarChart(lastUserVector, null);
+        } else {
+          selectedCompare = key;
+          renderRadarChart(lastUserVector, key);
+        }
+        renderPhilosophyCards(lastResults, lastUserVector);
+      });
+
+      container.appendChild(card);
+    });
+  }
+
+  // ── Profile-based Suggestion ──
+
+  function getProfileSuggestion(userVector) {
+    const topDims = getTopDimensions(userVector, 1);
+    if (topDims.length === 0) return t("profileSuggestions.general");
+
+    const topDim = topDims[0].dim;
+    const mapping = {
+      D7: "highAction",
+      D2: "highRights",
+      D5: "highEco",
+      D4: "highCare",
+    };
+
+    const suggestionKey = mapping[topDim] || "general";
+    return t("profileSuggestions." + suggestionKey);
   }
 
   // ── Results Rendering ──
 
-  function renderResults() {
+  function renderResults(isLanguageSwitch) {
     const { userVector, results } = calculateResults(answers);
     lastUserVector = userVector;
     lastResults = results;
-    const topMatch = results[0];
-    selectedCompare = topMatch.key;
+    if (!isLanguageSwitch) {
+      selectedCompare = null;
+    }
 
-    // Radar chart + selectors
-    renderRadarChart(userVector, topMatch.key);
-    renderProfileSelectors(results, topMatch.key);
+    // Radar chart (user only by default, or with comparison if preserved)
+    renderRadarChart(userVector, selectedCompare);
 
-    // Top match card
-    document.getElementById("top-result-label").textContent = t("topResultLabel");
-    document.getElementById("top-result-name").textContent = t("categories." + topMatch.key);
-    document.getElementById("top-result-percent").textContent = `${topMatch.similarity}%`;
-    document.getElementById("top-result-desc").textContent =
-      t("categoryDescriptions." + topMatch.key);
+    // Dimension Insights
+    renderDimensionInsights(userVector);
 
-    // All matches bars
-    const barsContainer = document.getElementById("result-bars");
-    barsContainer.innerHTML = "";
-
-    results.forEach(({ key, similarity }) => {
-      const color = PROFILE_COLORS[key];
-      const barRow = document.createElement("div");
-      barRow.className = "bar-row";
-      barRow.innerHTML = `
-        <div class="bar-label">
-          <span class="bar-category">${t("categories." + key)}</span>
-          <span class="bar-percent">${similarity}%</span>
-        </div>
-        <div class="bar-track">
-          <div class="bar-fill" data-width="${similarity}" style="background-color: ${color}"></div>
-        </div>
-      `;
-      barsContainer.appendChild(barRow);
-    });
+    // Dietary Philosophy Cards
+    renderPhilosophyCards(results, userVector);
 
     // Reducetarian scale
     const reductionScore = calculateReducetarianScale(userVector);
     document.getElementById("reducetarian-desc").textContent =
       t("reducetarianDesc").replace("{score}", reductionScore);
 
-    // Env impact
+    // Env impact (use highest-similarity profile)
+    const topMatch = results[0];
     const co2 = CO2_DATA[topMatch.key];
     const yearlyReduction = Math.round((3.8 - co2.daily) * 365);
     document.getElementById("env-desc").textContent =
       t("envImpactDesc").replace("{kg}", yearlyReduction);
 
-    // Suggestion
+    // Suggestion (profile-based)
     document.getElementById("suggestion-text").textContent =
-      t("suggestions." + topMatch.key);
+      getProfileSuggestion(userVector);
 
-    // Animate bars and scale
+    // Animate scale
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
-        document.querySelectorAll(".bar-fill").forEach((bar) => {
-          bar.style.width = bar.dataset.width + "%";
-        });
         document.getElementById("scale-fill").style.width = reductionScore + "%";
         document.getElementById("scale-marker").style.left = reductionScore + "%";
       });
@@ -314,7 +375,7 @@ document.addEventListener("DOMContentLoaded", () => {
     toggleLang();
     updateAllText();
     if (screens.results.classList.contains("active")) {
-      renderResults();
+      renderResults(true);
     } else if (screens.references.classList.contains("active")) {
       renderReferences();
     }
@@ -363,12 +424,20 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("share-btn").addEventListener("click", () => {
     const { userVector, results } = calculateResults(answers);
     const reductionScore = calculateReducetarianScale(userVector);
-    const lines = results.map(
-      ({ key, similarity }) => `${t("categories." + key)}: ${similarity}%`
+    const topDims = getTopDimensions(userVector, 3);
+
+    const dimLines = topDims.map(
+      ({ dim, score }) => `${t("dimensions." + dim)}: ${Math.round(score * 100)}%`
     );
+    const matchLines = results.map(({ key, similarity, subtype }) => {
+      const subtypeName = subtype ? ` (${t("subtypes." + subtype.key).name})` : "";
+      return `${t("categories." + key)}${subtypeName}: ${similarity}%`;
+    });
+
     const text =
       `\ud83e\udd57 Diet Pallette - ${t("resultTitle")}\n\n` +
-      `${lines.join("\n")}\n\n` +
+      `${dimLines.join("\n")}\n\n` +
+      `${matchLines.join("\n")}\n\n` +
       `${t("reducetarianTitle")}: ${reductionScore}%`;
 
     navigator.clipboard.writeText(text).then(() => {

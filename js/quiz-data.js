@@ -21,6 +21,28 @@ const PROFILES = {
   consciousOmnivore: { D1: 0.25, D2: 0.10, D3: 0.40, D4: 0.30, D5: 0.30, D6: 0.20, D7: 0.25 },
 };
 
+// Subtypes within each dietary category based on ethical motivation
+const SUBTYPES = {
+  vegan: [
+    { key: "rights",      triggers: ["D2", "D4"] },
+    { key: "utilitarian",  triggers: ["D1", "D6"] },
+    { key: "ecological",   triggers: ["D5", "D7"] },
+  ],
+  vegetarian: [
+    { key: "compassion",   triggers: ["D4", "D2"] },
+    { key: "environmental", triggers: ["D5", "D1"] },
+  ],
+  reducetarian: [
+    { key: "strategic",    triggers: ["D1", "D6"] },
+    { key: "virtue",       triggers: ["D3", "D7"] },
+    { key: "starter",      triggers: [] },
+  ],
+  consciousOmnivore: [
+    { key: "reflective",   triggers: ["D3", "D5"] },
+    { key: "autonomy",     triggers: [] },
+  ],
+};
+
 // CO2 data per profile (kg CO2/day, baseline omnivore = 3.8 kg/day)
 const CO2_DATA = {
   vegan:             { daily: 2.1, reductionPercent: 45 },
@@ -252,10 +274,54 @@ function calculateResults(answers) {
   const results = Object.entries(PROFILES).map(([key, profile]) => ({
     key,
     similarity: Math.round(gaussianSimilarity(userVector, profile) * 100),
+    subtype: determineSubtype(key, userVector),
   }));
 
   results.sort((a, b) => b.similarity - a.similarity);
   return { userVector, results };
+}
+
+/**
+ * Determine the best-matching subtype for a dietary category.
+ */
+function determineSubtype(categoryKey, userVector) {
+  const subtypes = SUBTYPES[categoryKey];
+  if (!subtypes || subtypes.length === 0) return null;
+
+  // For reducetarian: fallback to "starter" if average dimension score is very low
+  if (categoryKey === "reducetarian") {
+    const avg = DIMENSIONS.reduce((sum, d) => sum + (userVector[d] || 0), 0) / DIMENSIONS.length;
+    if (avg < 0.3) return subtypes.find(s => s.key === "starter");
+  }
+
+  // For consciousOmnivore: fallback to "autonomy" if D6 is very low
+  if (categoryKey === "consciousOmnivore") {
+    if ((userVector.D6 || 0) < 0.2) return subtypes.find(s => s.key === "autonomy");
+  }
+
+  // Standard: pick subtype with highest sum of trigger dimension scores
+  let best = null;
+  let bestScore = -Infinity;
+  for (const sub of subtypes) {
+    if (sub.triggers.length === 0) continue;
+    const score = sub.triggers.reduce((sum, d) => sum + (userVector[d] || 0), 0);
+    if (score > bestScore) {
+      bestScore = score;
+      best = sub;
+    }
+  }
+  return best;
+}
+
+/**
+ * Return the user's top N dimensions sorted by score descending.
+ */
+function getTopDimensions(userVector, n) {
+  n = n || 3;
+  return DIMENSIONS
+    .map(dim => ({ dim, score: userVector[dim] || 0 }))
+    .sort((a, b) => b.score - a.score)
+    .slice(0, n);
 }
 
 /**
