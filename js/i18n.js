@@ -20,7 +20,7 @@ const REFERENCE_SOURCES = [
 
 const translations = {
   ja: {
-    appTitle: "Diet Pallette",
+    appTitle: "Diet Palette",
     appSubtitle: "\u3042\u306a\u305f\u306e\u98df\u306e\u54f2\u5b66\u3092\u53ef\u8996\u5316\u3059\u308b",
     disclaimer:
       "\u672c\u30a2\u30d7\u30ea\u3067\u306f\u3001\u52d5\u7269\u611b\u8b77\u306e\u7cbe\u795e\u306b\u57fa\u3065\u304f\u300c\u751f\u304d\u65b9\u300d\u3067\u3042\u308b\u30d3\u30fc\u30ac\u30cb\u30ba\u30e0\u304b\u3089\u3001" +
@@ -147,7 +147,7 @@ const translations = {
     },
   },
   en: {
-    appTitle: "Diet Pallette",
+    appTitle: "Diet Palette",
     appSubtitle: "Visualize Your Dietary Philosophy",
     disclaimer:
       "This app visualizes a diverse gradient from veganism\u2014a way of living " +
