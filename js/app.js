@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // 2. Get the form ID from the URL: docs.google.com/forms/d/e/{FORM_ID}/viewform
   // 3. Get entry IDs by inspecting the form's HTML (each field has entry.XXXXXXX)
   const GOOGLE_FORMS_CONFIG = {
-    enabled: false,
+    enabled: true,
     formId: "1FAIpQLSfUyG2LAX7R0S69w6OZhEtM0pyx3GLf71rZVP2xT3h6M93hUg",
     fields: {
       selfId: "entry.000000001",
