@@ -79,8 +79,15 @@
       <!-- Results Screen -->
       <div id="results-screen" class="screen">
         <div class="results-content">
-          <h2 data-i18n="resultTitle" class="results-title">あなたの食の哲学</h2>
+          <h2 data-i18n="resultTitle" class="results-title">あなたの倫理的プロファイル</h2>
 
+          <!-- Radar Chart -->
+          <div class="radar-section">
+            <div id="radar-chart" class="radar-chart"></div>
+            <div id="radar-legend" class="radar-legend"></div>
+          </div>
+
+          <!-- Top Match -->
           <div class="top-result-card">
             <span id="top-result-label" class="top-label"></span>
             <div class="top-main">
@@ -90,7 +97,35 @@
             <p id="top-result-desc" class="top-desc"></p>
           </div>
 
+          <!-- All Matches -->
+          <h3 id="all-matches-label" class="section-label" data-i18n="allMatchesLabel"></h3>
           <div id="result-bars" class="result-bars"></div>
+
+          <!-- Reducetarian Scale -->
+          <div class="reducetarian-section">
+            <h3 data-i18n="reducetarianTitle" class="section-label"></h3>
+            <p id="reducetarian-desc" class="reducetarian-desc"></p>
+            <div class="scale-track">
+              <div id="scale-fill" class="scale-fill"></div>
+              <div id="scale-marker" class="scale-marker"></div>
+            </div>
+            <div class="scale-labels">
+              <span>0%</span>
+              <span>100%</span>
+            </div>
+          </div>
+
+          <!-- Environmental Impact -->
+          <div class="env-section">
+            <h3 data-i18n="envImpactTitle" class="section-label"></h3>
+            <p id="env-desc" class="env-desc"></p>
+          </div>
+
+          <!-- Suggestion -->
+          <div class="suggestion-card">
+            <h3 data-i18n="suggestionTitle" class="suggestion-title"></h3>
+            <p id="suggestion-text" class="suggestion-text"></p>
+          </div>
 
           <div class="result-actions">
             <button id="share-btn" class="secondary-btn" data-i18n="shareText">結果をシェア</button>

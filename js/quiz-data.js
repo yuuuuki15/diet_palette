@@ -1,288 +1,411 @@
+const DIMENSIONS = ["D1", "D2", "D3", "D4", "D5", "D6", "D7"];
+
+// Max possible positive score for each dimension (used for normalization)
+const MAX_POSSIBLE = {
+  D1: 8,  // Q1(+3) + Q6(+2) + Q7(+2) + Q8(+1)
+  D2: 11, // Q1(+2) + Q2(+3) + Q7(+2) + Q8(+3) + Q11(+1)
+  D3: 9,  // Q1(+1) + Q3(+3) + Q6(+1) + Q7(+1) + Q12(+3)
+  D4: 7,  // Q2(+1) + Q6(+2) + Q8(+1) + Q11(+3)
+  D5: 8,  // Q4(+3) + Q5(+2) + Q9(+2) + Q10(+1)
+  D6: 4,  // Q5(+2) + Q10(+2)
+  D7: 5,  // Q3(+1) + Q9(+3) + Q12(+1)
+};
+
+// Reference profile vectors for each dietary philosophy [D1..D7]
+// Based on literature: S1-S16
+const PROFILES = {
+  vegan:             { D1: 0.90, D2: 0.95, D3: 0.70, D4: 0.85, D5: 0.85, D6: 0.80, D7: 0.90 },
+  vegetarian:        { D1: 0.75, D2: 0.70, D3: 0.65, D4: 0.75, D5: 0.70, D6: 0.65, D7: 0.75 },
+  pescatarian:       { D1: 0.60, D2: 0.40, D3: 0.55, D4: 0.60, D5: 0.75, D6: 0.55, D7: 0.65 },
+  reducetarianHigh:  { D1: 0.70, D2: 0.50, D3: 0.80, D4: 0.70, D5: 0.80, D6: 0.60, D7: 0.60 },
+  reducetarianMid:   { D1: 0.55, D2: 0.35, D3: 0.65, D4: 0.55, D5: 0.60, D6: 0.45, D7: 0.50 },
+  reducetarianLow:   { D1: 0.40, D2: 0.20, D3: 0.50, D4: 0.40, D5: 0.45, D6: 0.30, D7: 0.35 },
+  consciousOmnivore: { D1: 0.25, D2: 0.10, D3: 0.40, D4: 0.30, D5: 0.30, D6: 0.20, D7: 0.25 },
+};
+
+// CO2 data per dietary profile (kg CO2/day, % reduction vs omnivore baseline 3.8 kg/day)
+const CO2_DATA = {
+  vegan:             { daily: 2.1, reductionPercent: 45 },
+  vegetarian:        { daily: 2.6, reductionPercent: 32 },
+  pescatarian:       { daily: 3.2, reductionPercent: 16 },
+  reducetarianHigh:  { daily: 2.8, reductionPercent: 26 },
+  reducetarianMid:   { daily: 3.3, reductionPercent: 13 },
+  reducetarianLow:   { daily: 3.5, reductionPercent: 8 },
+  consciousOmnivore: { daily: 3.7, reductionPercent: 3 },
+};
+
+// 12 Questions based on the ethical framework design document
+// Each option has scores: { D1:±n, D2:±n, ... }
+// Sources: [S1]-[S16]
 const quizQuestions = [
+  // Q1: Utilitarian Orientation [S1, S7]
   {
     id: 1,
     question: {
-      ja: "肉（牛・豚・鶏など）をどのくらいの頻度で食べますか？",
-      en: "How often do you eat meat (beef, pork, chicken, etc.)?",
+      ja: "あなたの行動の結果、100人の人々が少しずつ幸せになるのと、1人の人が大きな苦痛を受けるのとでは、どちらがより重要ですか？",
+      en: "If your actions result in 100 people becoming slightly happier while one person suffers greatly, which matters more?",
     },
     options: [
       {
-        text: { ja: "ほぼ毎日", en: "Almost every day" },
-        scores: { vegan: 0, vegetarian: 0, pescatarian: 1, flexitarian: 1, omnivore: 5 },
+        text: { ja: "100人の幸福を優先する", en: "Prioritize the happiness of 100 people" },
+        scores: { D1: 3 },
       },
       {
-        text: { ja: "週に数回", en: "Several times a week" },
-        scores: { vegan: 0, vegetarian: 0, pescatarian: 1, flexitarian: 3, omnivore: 3 },
+        text: { ja: "1人の苦痛回避を優先する", en: "Prioritize preventing the suffering of 1 person" },
+        scores: { D2: 2 },
       },
       {
-        text: { ja: "月に数回程度", en: "A few times a month" },
-        scores: { vegan: 1, vegetarian: 2, pescatarian: 2, flexitarian: 5, omnivore: 1 },
-      },
-      {
-        text: { ja: "全く食べない", en: "Never" },
-        scores: { vegan: 5, vegetarian: 5, pescatarian: 3, flexitarian: 0, omnivore: 0 },
+        text: { ja: "状況によると思う", en: "It depends on the situation" },
+        scores: { D1: 1, D3: 1 },
       },
     ],
   },
+  // Q2: Rights-Based Orientation [S2, S14]
   {
     id: 2,
     question: {
-      ja: "乳製品（牛乳・チーズ・ヨーグルトなど）を摂りますか？",
-      en: "Do you consume dairy products (milk, cheese, yogurt, etc.)?",
+      ja: "意識や感覚を持つ存在には、その知能のレベルに関係なく、侵害されてはならない固有の権利があると思いますか？",
+      en: "Do you believe that any being with consciousness and the capacity to feel has inherent rights that should not be violated, regardless of intelligence?",
     },
     options: [
       {
-        text: { ja: "はい、日常的に摂ります", en: "Yes, regularly" },
-        scores: { vegan: 0, vegetarian: 3, pescatarian: 3, flexitarian: 2, omnivore: 4 },
+        text: { ja: "強く同意する", en: "Strongly agree" },
+        scores: { D2: 3, D4: 1 },
       },
       {
-        text: { ja: "時々摂ります", en: "Sometimes" },
-        scores: { vegan: 1, vegetarian: 2, pescatarian: 2, flexitarian: 4, omnivore: 2 },
+        text: { ja: "同意する", en: "Agree" },
+        scores: { D2: 2 },
       },
       {
-        text: { ja: "ほとんど摂らない", en: "Rarely" },
-        scores: { vegan: 4, vegetarian: 1, pescatarian: 1, flexitarian: 2, omnivore: 0 },
+        text: { ja: "どちらとも言えない", en: "Neither agree nor disagree" },
+        scores: {},
       },
       {
-        text: { ja: "全く摂らない", en: "Never" },
-        scores: { vegan: 5, vegetarian: 0, pescatarian: 0, flexitarian: 0, omnivore: 0 },
+        text: { ja: "同意しない", en: "Disagree" },
+        scores: { D2: -2 },
       },
     ],
   },
+  // Q3: Virtue Ethics Orientation [S6, S11, S13]
   {
     id: 3,
     question: {
-      ja: "魚介類についてはどうですか？",
-      en: "What about fish and seafood?",
+      ja: "「あなたが日常的に行う小さな行動が、あなたの人格や品性を形作る」という考えにどの程度同意しますか？",
+      en: "To what extent do you agree that your small, everyday actions shape your character and moral quality?",
     },
     options: [
       {
-        text: { ja: "よく食べる", en: "I eat it regularly" },
-        scores: { vegan: 0, vegetarian: 0, pescatarian: 5, flexitarian: 2, omnivore: 4 },
+        text: { ja: "強く同意する", en: "Strongly agree" },
+        scores: { D3: 3, D7: 1 },
       },
       {
-        text: { ja: "時々食べる", en: "Sometimes" },
-        scores: { vegan: 0, vegetarian: 1, pescatarian: 3, flexitarian: 4, omnivore: 2 },
+        text: { ja: "同意する", en: "Agree" },
+        scores: { D3: 2 },
       },
       {
-        text: { ja: "ほとんど食べない", en: "Rarely" },
-        scores: { vegan: 3, vegetarian: 3, pescatarian: 1, flexitarian: 2, omnivore: 1 },
+        text: { ja: "どちらとも言えない", en: "Neither agree nor disagree" },
+        scores: {},
       },
       {
-        text: { ja: "全く食べない", en: "Never" },
-        scores: { vegan: 5, vegetarian: 4, pescatarian: 0, flexitarian: 0, omnivore: 0 },
+        text: { ja: "同意しない", en: "Disagree" },
+        scores: { D3: -2 },
       },
     ],
   },
+  // Q4: Ecocentric Orientation [S4, S5]
   {
     id: 4,
     question: {
-      ja: "食事の選択における主な動機は何ですか？",
-      en: "What is your primary motivation for your dietary choices?",
+      ja: "自然環境や生態系は、人間の利益とは独立して、それ自体に価値があると思いますか？",
+      en: "Do you believe that the natural environment and ecosystems have inherent value independent of human benefit?",
     },
     options: [
       {
-        text: { ja: "特に意識していない・味の好み", en: "No particular reason / taste preference" },
-        scores: { vegan: 0, vegetarian: 0, pescatarian: 1, flexitarian: 1, omnivore: 5 },
+        text: { ja: "強く同意する", en: "Strongly agree" },
+        scores: { D5: 3 },
       },
       {
-        text: { ja: "健康のため", en: "For health reasons" },
-        scores: { vegan: 1, vegetarian: 2, pescatarian: 3, flexitarian: 4, omnivore: 1 },
+        text: { ja: "同意する", en: "Agree" },
+        scores: { D5: 2 },
       },
       {
-        text: { ja: "環境への配慮", en: "Environmental concerns" },
-        scores: { vegan: 3, vegetarian: 3, pescatarian: 2, flexitarian: 3, omnivore: 0 },
+        text: { ja: "どちらとも言えない", en: "Neither agree nor disagree" },
+        scores: {},
       },
       {
-        text: { ja: "動物の権利・福祉のため", en: "For animal rights / welfare" },
-        scores: { vegan: 5, vegetarian: 4, pescatarian: 1, flexitarian: 1, omnivore: 0 },
+        text: { ja: "同意しない", en: "Disagree" },
+        scores: { D5: -2 },
       },
     ],
   },
+  // Q5: Intergenerational Justice [S4, S5, S10]
   {
     id: 5,
     question: {
-      ja: "畜産業についてどう感じますか？",
-      en: "How do you feel about animal farming?",
+      ja: "「限りある資源の中で、将来世代のために今の世代が犠牲を払うべきだ」という考えにどの程度同意しますか？",
+      en: "To what extent do you agree that the current generation should make sacrifices for the sake of future generations, given limited resources?",
     },
     options: [
       {
-        text: { ja: "必要なもので問題ない", en: "It's necessary and I have no issues with it" },
-        scores: { vegan: 0, vegetarian: 0, pescatarian: 1, flexitarian: 1, omnivore: 5 },
+        text: { ja: "強く同意する", en: "Strongly agree" },
+        scores: { D5: 2, D6: 2 },
       },
       {
-        text: { ja: "問題はあるが仕方ない", en: "There are issues, but it's unavoidable" },
-        scores: { vegan: 0, vegetarian: 1, pescatarian: 2, flexitarian: 4, omnivore: 2 },
+        text: { ja: "同意する", en: "Agree" },
+        scores: { D5: 1, D6: 1 },
       },
       {
-        text: { ja: "なるべく依存を減らしたい", en: "I want to reduce reliance on it" },
-        scores: { vegan: 2, vegetarian: 4, pescatarian: 2, flexitarian: 3, omnivore: 0 },
+        text: { ja: "どちらとも言えない", en: "Neither agree nor disagree" },
+        scores: {},
       },
       {
-        text: { ja: "根本的に反対している", en: "I fundamentally oppose it" },
-        scores: { vegan: 5, vegetarian: 3, pescatarian: 0, flexitarian: 0, omnivore: 0 },
+        text: { ja: "同意しない", en: "Disagree" },
+        scores: { D5: -1, D6: -1 },
       },
     ],
   },
+  // Q6: Care Ethics vs Universalism [S3, S12, S15]
   {
     id: 6,
     question: {
-      ja: "外食時、どのようなメニューを選びますか？",
-      en: "When eating out, what do you typically choose?",
+      ja: "あなたは「自分と関係のある存在」と「遠くの見知らぬ存在」の苦痛を、同じように重要だと感じますか？",
+      en: "Do you feel that the suffering of those close to you and the suffering of distant strangers are equally important?",
     },
     options: [
       {
-        text: { ja: "好きなものを自由に選ぶ", en: "Whatever I feel like" },
-        scores: { vegan: 0, vegetarian: 0, pescatarian: 1, flexitarian: 1, omnivore: 5 },
+        text: { ja: "同じくらい重要だと感じる", en: "I feel they are equally important" },
+        scores: { D1: 2, D4: 1 },
       },
       {
-        text: { ja: "なるべく植物性メニューを選ぶ", en: "I try to choose plant-based options" },
-        scores: { vegan: 2, vegetarian: 2, pescatarian: 1, flexitarian: 5, omnivore: 0 },
+        text: { ja: "関係が近い存在の方が重要", en: "Those closer to me matter more" },
+        scores: { D4: 2 },
       },
       {
-        text: { ja: "魚介中心のメニューを選ぶ", en: "I mainly choose fish/seafood dishes" },
-        scores: { vegan: 0, vegetarian: 0, pescatarian: 5, flexitarian: 2, omnivore: 1 },
-      },
-      {
-        text: { ja: "必ずベジタリアン・ビーガンメニューを選ぶ", en: "Always vegetarian/vegan options" },
-        scores: { vegan: 5, vegetarian: 4, pescatarian: 0, flexitarian: 0, omnivore: 0 },
+        text: { ja: "状況によると思う", en: "It depends on the situation" },
+        scores: { D4: 1, D3: 1 },
       },
     ],
   },
+  // Q7: Consequentialism vs Deontology [S1, S2, S6, S7]
   {
     id: 7,
     question: {
-      ja: "食品の原材料表示で動物由来の成分を確認しますか？",
-      en: "Do you check food labels for animal-derived ingredients?",
+      ja: "「ある行動が結果的に良い結果をもたらすなら、その行動自体の正しさは問わなくてよい」と思いますか？",
+      en: "Do you believe that if an action produces good results, then the rightness of the action itself need not be questioned?",
     },
     options: [
       {
-        text: { ja: "全くしない", en: "Never" },
-        scores: { vegan: 0, vegetarian: 0, pescatarian: 0, flexitarian: 1, omnivore: 5 },
+        text: { ja: "同意する（結果が大切）", en: "Agree (results matter most)" },
+        scores: { D1: 2 },
       },
       {
-        text: { ja: "アレルギーなど必要な時だけ", en: "Only when necessary (allergies, etc.)" },
-        scores: { vegan: 0, vegetarian: 1, pescatarian: 1, flexitarian: 3, omnivore: 3 },
+        text: { ja: "同意しない（行動自体の正しさが大切）", en: "Disagree (the action itself must be right)" },
+        scores: { D2: 2, D3: 1 },
       },
       {
-        text: { ja: "よく確認する", en: "I often check" },
-        scores: { vegan: 3, vegetarian: 4, pescatarian: 2, flexitarian: 2, omnivore: 0 },
-      },
-      {
-        text: { ja: "常に全ての製品で確認する", en: "Always, for every product" },
-        scores: { vegan: 5, vegetarian: 3, pescatarian: 1, flexitarian: 0, omnivore: 0 },
+        text: { ja: "どちらとも言えない", en: "Neither agree nor disagree" },
+        scores: { D1: 1, D2: 1 },
       },
     ],
   },
+  // Q8: Anthropocentrism Scale [S1, S2, S4, S6]
   {
     id: 8,
     question: {
-      ja: "革・ウール・シルクなど動物由来の素材についてどう思いますか？",
-      en: "How do you feel about animal-derived materials (leather, wool, silk)?",
+      ja: "人間の健康上の利益と動物の福祉が矛盾する場合、どちらを優先しますか？",
+      en: "When human health benefits conflict with animal welfare, which do you prioritize?",
     },
     options: [
       {
-        text: { ja: "問題ないと思う", en: "I have no issues with them" },
-        scores: { vegan: 0, vegetarian: 1, pescatarian: 2, flexitarian: 2, omnivore: 5 },
+        text: { ja: "常に人間を優先する", en: "Always prioritize humans" },
+        scores: { D2: -2 },
       },
       {
-        text: { ja: "代替品があればそちらを選ぶ", en: "I prefer alternatives when available" },
-        scores: { vegan: 2, vegetarian: 2, pescatarian: 2, flexitarian: 4, omnivore: 1 },
+        text: { ja: "通常は人間を優先する", en: "Usually prioritize humans" },
+        scores: { D2: -1 },
       },
       {
-        text: { ja: "積極的に避けている", en: "I actively avoid them" },
-        scores: { vegan: 4, vegetarian: 2, pescatarian: 1, flexitarian: 1, omnivore: 0 },
+        text: { ja: "状況に応じて判断する", en: "Judge on a case-by-case basis" },
+        scores: { D2: 1, D1: 1 },
       },
       {
-        text: { ja: "一切使用しない", en: "I never use them" },
-        scores: { vegan: 5, vegetarian: 1, pescatarian: 0, flexitarian: 0, omnivore: 0 },
+        text: { ja: "動物の福祉も同等に考慮する", en: "Consider animal welfare equally" },
+        scores: { D2: 3, D4: 1 },
       },
     ],
   },
+  // Q9: Environmental Action Readiness [S5, S9, S10, S16]
   {
     id: 9,
     question: {
-      ja: "他の人に食事の変更を勧めることはありますか？",
-      en: "Do you encourage others to change their diet?",
+      ja: "食料生産が気候変動の主要因の一つだと知った場合、それはあなたの食事を変える十分な理由になりますか？",
+      en: "If you learned that food production is a major driver of climate change, would that be sufficient reason to change your diet?",
     },
     options: [
       {
-        text: { ja: "いいえ、個人の自由だと思う", en: "No, it's a personal choice" },
-        scores: { vegan: 0, vegetarian: 0, pescatarian: 1, flexitarian: 2, omnivore: 4 },
+        text: { ja: "すぐに食事を変える", en: "I would change my diet immediately" },
+        scores: { D5: 2, D7: 3 },
       },
       {
-        text: { ja: "聞かれたら情報を共有する", en: "I share information if asked" },
-        scores: { vegan: 1, vegetarian: 2, pescatarian: 2, flexitarian: 4, omnivore: 1 },
+        text: { ja: "少しずつ減らしていく", en: "I would gradually reduce" },
+        scores: { D5: 1, D7: 2 },
       },
       {
-        text: { ja: "やんわりと提案することがある", en: "I gently suggest it sometimes" },
-        scores: { vegan: 3, vegetarian: 3, pescatarian: 2, flexitarian: 2, omnivore: 0 },
+        text: { ja: "考えるが、すぐには変えない", en: "I would consider it, but not change right away" },
+        scores: { D5: 1, D7: 1 },
       },
       {
-        text: { ja: "積極的に提唱している", en: "I actively advocate for it" },
-        scores: { vegan: 5, vegetarian: 3, pescatarian: 1, flexitarian: 0, omnivore: 0 },
+        text: { ja: "食事は変えないと思う", en: "I don't think I would change my diet" },
+        scores: { D7: -2 },
       },
     ],
   },
+  // Q10: Autonomy vs Social Responsibility [S5, S11, S13]
   {
     id: 10,
     question: {
-      ja: "あなたが理想とする食のシステムはどれですか？",
-      en: "What is your ideal future food system?",
+      ja: "「食べることは個人の自由であり、他者が口出しすべきことではない」という考えにどの程度同意しますか？",
+      en: "To what extent do you agree that eating is a personal freedom and others should not interfere?",
     },
     options: [
       {
-        text: { ja: "現状のままで良い", en: "The current system is fine" },
-        scores: { vegan: 0, vegetarian: 0, pescatarian: 1, flexitarian: 0, omnivore: 5 },
+        text: { ja: "強く同意する", en: "Strongly agree" },
+        scores: { D6: -2 },
       },
       {
-        text: { ja: "より持続可能な選択肢が増えると良い", en: "More sustainable options would be nice" },
-        scores: { vegan: 1, vegetarian: 1, pescatarian: 2, flexitarian: 5, omnivore: 1 },
+        text: { ja: "同意する", en: "Agree" },
+        scores: { D6: -1 },
       },
       {
-        text: {
-          ja: "植物性中心で、少量の動物性食品を許容",
-          en: "Mostly plant-based with minimal animal products",
-        },
-        scores: { vegan: 2, vegetarian: 4, pescatarian: 2, flexitarian: 3, omnivore: 0 },
+        text: { ja: "どちらとも言えない", en: "Neither agree nor disagree" },
+        scores: {},
       },
       {
-        text: { ja: "完全に動物性食品を使わない社会", en: "A completely animal-free society" },
-        scores: { vegan: 5, vegetarian: 2, pescatarian: 0, flexitarian: 0, omnivore: 0 },
+        text: { ja: "同意しない（食は公共の問題でもある）", en: "Disagree (food is also a public issue)" },
+        scores: { D6: 2, D5: 1 },
+      },
+    ],
+  },
+  // Q11: Empathic Sensitivity [S3, S12, S15]
+  {
+    id: 11,
+    question: {
+      ja: "動物が苦しんでいる場面を見たとき、あなたはどの程度強い感情的反応を感じますか？",
+      en: "How strong is your emotional response when you see animals suffering?",
+    },
+    options: [
+      {
+        text: { ja: "非常に強い感情を感じる", en: "Very strong emotional response" },
+        scores: { D4: 3, D2: 1 },
+      },
+      {
+        text: { ja: "強い感情を感じる", en: "Strong emotional response" },
+        scores: { D4: 2 },
+      },
+      {
+        text: { ja: "ある程度感じる", en: "Somewhat" },
+        scores: {},
+      },
+      {
+        text: { ja: "あまり感じない", en: "Not much" },
+        scores: { D4: -2 },
+      },
+    ],
+  },
+  // Q12: Moral Motivation Strength [S2, S6, S13, S16]
+  {
+    id: 12,
+    question: {
+      ja: "「たとえ一人の行動が全体の状況を大きく変えなくても、正しいと思うことはすべきだ」という考えに同意しますか？",
+      en: "Do you agree that you should do what you believe is right, even if one person's actions won't significantly change the overall situation?",
+    },
+    options: [
+      {
+        text: { ja: "強く同意する", en: "Strongly agree" },
+        scores: { D3: 3, D7: 1 },
+      },
+      {
+        text: { ja: "同意する", en: "Agree" },
+        scores: { D3: 2, D7: 1 },
+      },
+      {
+        text: { ja: "どちらとも言えない", en: "Neither agree nor disagree" },
+        scores: {},
+      },
+      {
+        text: { ja: "同意しない", en: "Disagree" },
+        scores: { D3: -1, D7: -2 },
       },
     ],
   },
 ];
 
-function calculateResults(answers) {
-  const totals = { vegan: 0, vegetarian: 0, pescatarian: 0, flexitarian: 0, omnivore: 0 };
+/**
+ * Calculate normalized 7-dimension user vector from answers.
+ * answers: array of option indices (one per question, null if unanswered)
+ * Returns: { D1: 0.0-1.0, ..., D7: 0.0-1.0 }
+ */
+function calculateUserVector(answers) {
+  const raw = { D1: 0, D2: 0, D3: 0, D4: 0, D5: 0, D6: 0, D7: 0 };
 
   answers.forEach((answerIndex, questionIndex) => {
     if (answerIndex === null || answerIndex === undefined) return;
     const scores = quizQuestions[questionIndex].options[answerIndex].scores;
-    for (const key in scores) {
-      totals[key] += scores[key];
+    for (const dim in scores) {
+      raw[dim] += scores[dim];
     }
   });
 
-  const sum = Object.values(totals).reduce((a, b) => a + b, 0);
-  if (sum === 0) {
-    return { vegan: 20, vegetarian: 20, pescatarian: 20, flexitarian: 20, omnivore: 20 };
+  const normalized = {};
+  for (const dim of DIMENSIONS) {
+    normalized[dim] = Math.min(1, Math.max(0, raw[dim]) / MAX_POSSIBLE[dim]);
   }
+  return normalized;
+}
 
-  const percentages = {};
-  for (const key in totals) {
-    percentages[key] = Math.round((totals[key] / sum) * 100);
+/**
+ * Cosine similarity between two 7D vectors.
+ * Returns value between 0 and 1 (clamped, since all normalized values are >= 0).
+ */
+function cosineSimilarity(vecA, vecB) {
+  let dot = 0;
+  let magA = 0;
+  let magB = 0;
+  for (const dim of DIMENSIONS) {
+    dot += vecA[dim] * vecB[dim];
+    magA += vecA[dim] * vecA[dim];
+    magB += vecB[dim] * vecB[dim];
   }
+  magA = Math.sqrt(magA);
+  magB = Math.sqrt(magB);
+  if (magA === 0 || magB === 0) return 0;
+  return dot / (magA * magB);
+}
 
-  // Adjust rounding to ensure sum equals 100
-  const percentSum = Object.values(percentages).reduce((a, b) => a + b, 0);
-  if (percentSum !== 100) {
-    const maxKey = Object.keys(percentages).reduce((a, b) =>
-      percentages[a] > percentages[b] ? a : b
-    );
-    percentages[maxKey] += 100 - percentSum;
+/**
+ * Calculate similarity percentages against all profiles.
+ * Returns sorted array of { key, similarity } objects.
+ */
+function calculateResults(answers) {
+  const userVector = calculateUserVector(answers);
+
+  const results = Object.entries(PROFILES).map(([key, profile]) => ({
+    key,
+    similarity: Math.round(cosineSimilarity(userVector, profile) * 100),
+  }));
+
+  results.sort((a, b) => b.similarity - a.similarity);
+  return { userVector, results };
+}
+
+/**
+ * Calculate Reducetarian Scale score (0-100).
+ * Weighted average of all 7 normalized dimensions.
+ */
+function calculateReducetarianScale(userVector) {
+  let sum = 0;
+  for (const dim of DIMENSIONS) {
+    sum += userVector[dim];
   }
-
-  return percentages;
+  return Math.round((sum / DIMENSIONS.length) * 100);
 }
