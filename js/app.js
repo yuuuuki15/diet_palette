@@ -438,21 +438,13 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     const url = `https://docs.google.com/forms/d/e/${GOOGLE_FORMS_CONFIG.formId}/formResponse`;
-    const body = params.toString();
-
-    console.log("[Diet Palette] Submitting to:", url);
-    console.log("[Diet Palette] Payload:", body);
 
     fetch(url, {
       method: "POST",
       mode: "no-cors",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: body,
-    }).then(() => {
-      console.log("[Diet Palette] fetch completed (no-cors, response opaque)");
-    }).catch((err) => {
-      console.error("[Diet Palette] fetch failed:", err);
-    });
+      body: params.toString(),
+    }).catch(() => {});
 
     formSubmitted = true;
   }
