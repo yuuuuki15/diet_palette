@@ -115,7 +115,8 @@ header {
   color: var(--color-primary);
 }
 
-.logo-icon svg { width: 100%; height: 100%; }
+.logo-icon svg,
+.logo-icon img { width: 100%; height: 100%; object-fit: contain; }
 
 .logo-area h1 {
   font-size: 2rem;
