@@ -429,30 +429,32 @@ document.addEventListener("DOMContentLoaded", () => {
     const topMatch = results[0];
     const fields = GOOGLE_FORMS_CONFIG.fields;
 
-    const formData = new URLSearchParams();
-    formData.set(fields.selfId, selfIdentification || "none");
-    formData.set(fields.topMatch, topMatch.key);
-    formData.set(fields.topMatchSimilarity, String(topMatch.similarity));
+    const params = new URLSearchParams();
+    params.set(fields.selfId, selfIdentification || "none");
+    params.set(fields.topMatch, topMatch.key);
+    params.set(fields.topMatchSimilarity, String(topMatch.similarity));
     DIMENSIONS.forEach((d) => {
-      formData.set(fields[d], String(Math.round(userVector[d] * 100)));
+      params.set(fields[d], String(Math.round(userVector[d] * 100)));
     });
 
     const url = `https://docs.google.com/forms/d/e/${GOOGLE_FORMS_CONFIG.formId}/formResponse`;
+    const body = params.toString();
 
-    // Try sendBeacon first (POST, no CORS, survives page unload)
-    const beaconSent = navigator.sendBeacon(url, formData);
+    console.log("[Diet Palette] Submitting to:", url);
+    console.log("[Diet Palette] Payload:", body);
 
-    // Fallback: fetch with no-cors mode
-    if (!beaconSent) {
-      fetch(url, {
-        method: "POST",
-        mode: "no-cors",
-        body: formData,
-      }).catch(() => {});
-    }
+    fetch(url, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: body,
+    }).then(() => {
+      console.log("[Diet Palette] fetch completed (no-cors, response opaque)");
+    }).catch((err) => {
+      console.error("[Diet Palette] fetch failed:", err);
+    });
 
     formSubmitted = true;
-    console.log("[Diet Palette] Form submitted via", beaconSent ? "sendBeacon" : "fetch no-cors");
   }
 
   // ── Events ──
