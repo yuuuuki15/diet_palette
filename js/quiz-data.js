@@ -60,6 +60,10 @@ const quizQuestions = [
       ja: "あなたの行動の結果、100人の人々が少しずつ幸せになるのと、1人の人が大きな苦痛を受けるのとでは、どちらがより重要ですか？",
       en: "If your actions result in 100 people becoming slightly happier while one person suffers greatly, which matters more?",
     },
+    hint: {
+      ja: "例：ある政策が100人の生活を少し良くするが、そのために5人が大きな犠牲を払う——あなたはこの政策を支持しますか？",
+      en: "e.g. A policy slightly improves 100 people's lives, but 5 people pay a heavy price for it — would you support it?",
+    },
     options: [
       {
         text: { ja: "100人の幸福を優先する", en: "Prioritize the happiness of 100 people" },
@@ -82,6 +86,10 @@ const quizQuestions = [
       ja: "意識や感覚を持つ存在には、その知能のレベルに関係なく、侵害されてはならない固有の権利があると思いますか？",
       en: "Do you believe that any being with consciousness and the capacity to feel has inherent rights that should not be violated, regardless of intelligence?",
     },
+    hint: {
+      ja: "例えば、犬と豚——知能や親しみやすさに関係なく、同じ「苦痛を受けない権利」があると思いますか？",
+      en: "e.g. Dogs and pigs — regardless of intelligence or familiarity, do they share the same right not to suffer?",
+    },
     options: [
       { text: { ja: "強く同意する", en: "Strongly agree" }, scores: { D2: 3, D4: 1 } },
       { text: { ja: "同意する", en: "Agree" }, scores: { D2: 2 } },
@@ -95,6 +103,10 @@ const quizQuestions = [
     question: {
       ja: "「あなたが日常的に行う小さな行動が、あなたの人格や品性を形作る」という考えにどの程度同意しますか？",
       en: "To what extent do you agree that your small, everyday actions shape your character and moral quality?",
+    },
+    hint: {
+      ja: "例えば、「何を食べるか」という毎日の小さな判断は、あなたの人柄を映し出していると思いますか？",
+      en: "e.g. Do you think what you choose to eat each day reflects who you are as a person?",
     },
     options: [
       { text: { ja: "強く同意する", en: "Strongly agree" }, scores: { D3: 3, D7: 1 } },
@@ -110,6 +122,10 @@ const quizQuestions = [
       ja: "自然環境や生態系は、人間の利益とは独立して、それ自体に価値があると思いますか？",
       en: "Do you believe that the natural environment and ecosystems have inherent value independent of human benefit?",
     },
+    hint: {
+      ja: "例えば、人間が一度も訪れない深海の生態系や、経済的価値のない希少種にも、守られるべき価値があると思いますか？",
+      en: "e.g. Do deep-sea ecosystems no human has ever visited, or rare species with no economic value, still deserve protection?",
+    },
     options: [
       { text: { ja: "強く同意する", en: "Strongly agree" }, scores: { D5: 3 } },
       { text: { ja: "同意する", en: "Agree" }, scores: { D5: 2 } },
@@ -123,6 +139,10 @@ const quizQuestions = [
     question: {
       ja: "「限りある資源の中で、将来世代のために今の世代が犠牲を払うべきだ」という考えにどの程度同意しますか？",
       en: "To what extent do you agree that the current generation should make sacrifices for the sake of future generations, given limited resources?",
+    },
+    hint: {
+      ja: "例えば、大好きなフライドチキンやハンバーガーが環境に大きな負荷をかけていると知ったら、次の世代のために控えられますか？",
+      en: "e.g. If you learned your favorite fried chicken or burgers have a heavy environmental cost, would you cut back for the next generation?",
     },
     options: [
       { text: { ja: "強く同意する", en: "Strongly agree" }, scores: { D5: 2, D6: 2 } },
@@ -138,6 +158,10 @@ const quizQuestions = [
       ja: "あなたは「自分と関係のある存在」と「遠くの見知らぬ存在」の苦痛を、同じように重要だと感じますか？",
       en: "Do you feel that the suffering of those close to you and the suffering of distant strangers are equally important?",
     },
+    hint: {
+      ja: "例えば、飼っているペットの痛みと、遠い国で起きている家畜の苦しみ。あなたの心への響き方は同じですか？",
+      en: "e.g. Your pet's pain vs. livestock suffering in a distant country — do they weigh the same in your heart?",
+    },
     options: [
       { text: { ja: "同じくらい重要だと感じる", en: "I feel they are equally important" }, scores: { D1: 2, D4: 1 } },
       { text: { ja: "関係が近い存在の方が重要", en: "Those closer to me matter more" }, scores: { D4: 2 } },
@@ -151,6 +175,10 @@ const quizQuestions = [
       ja: "「ある行動が結果的に良い結果をもたらすなら、その行動自体の正しさは問わなくてよい」と思いますか？",
       en: "Do you believe that if an action produces good results, then the rightness of the action itself need not be questioned?",
     },
+    hint: {
+      ja: "例えば、もし動物を一切苦しめずに培養肉が作れたら問題は解決しますか？ それとも、動物を「資源」として扱う考え方自体が問題ですか？",
+      en: "e.g. If lab-grown meat could be made without any animal suffering, is the problem solved? Or is treating animals as 'resources' itself the issue?",
+    },
     options: [
       { text: { ja: "同意する（結果が大切）", en: "Agree (results matter most)" }, scores: { D1: 2 } },
       { text: { ja: "同意しない（行動自体の正しさが大切）", en: "Disagree (the action itself must be right)" }, scores: { D2: 2, D3: 1 } },
@@ -163,6 +191,10 @@ const quizQuestions = [
     question: {
       ja: "人間の健康上の利益と動物の福祉が矛盾する場合、どちらを優先しますか？",
       en: "When human health benefits conflict with animal welfare, which do you prioritize?",
+    },
+    hint: {
+      ja: "例えば、新しい治療法のために動物実験が必要な場合、あなたはどう判断しますか？",
+      en: "e.g. If animal testing were required to develop a new medical treatment, how would you decide?",
     },
     options: [
       { text: { ja: "常に人間を優先する", en: "Always prioritize humans" }, scores: { D2: -2 } },
@@ -178,6 +210,10 @@ const quizQuestions = [
       ja: "食料生産が気候変動の主要因の一つだと知った場合、それはあなたの食事を変える十分な理由になりますか？",
       en: "If you learned that food production is a major driver of climate change, would that be sufficient reason to change your diet?",
     },
+    hint: {
+      ja: "例えば、牛肉1kgの生産には、車で約100km走行するのと同じCO₂が排出されています",
+      en: "e.g. Producing 1kg of beef emits roughly the same CO₂ as driving a car about 100km",
+    },
     options: [
       { text: { ja: "すぐに食事を変える", en: "I would change my diet immediately" }, scores: { D5: 2, D7: 3 } },
       { text: { ja: "少しずつ減らしていく", en: "I would gradually reduce" }, scores: { D5: 1, D7: 2 } },
@@ -191,6 +227,10 @@ const quizQuestions = [
     question: {
       ja: "「食べることは個人の自由であり、他者が口出しすべきことではない」という考えにどの程度同意しますか？",
       en: "To what extent do you agree that eating is a personal freedom and others should not interfere?",
+    },
+    hint: {
+      ja: "例えば、「お肉を減らしたほうがいい」と周りから言われたら、余計なお世話？ それとも大事な提言？",
+      en: "e.g. If someone told you to eat less meat — unwanted meddling, or valuable advice?",
     },
     options: [
       { text: { ja: "強く同意する", en: "Strongly agree" }, scores: { D6: -2 } },
@@ -206,6 +246,10 @@ const quizQuestions = [
       ja: "動物が苦しんでいる場面を見たとき、あなたはどの程度強い感情的反応を感じますか？",
       en: "How strong is your emotional response when you see animals suffering?",
     },
+    hint: {
+      ja: "例えば、屠畜の映像を目にしたとき、ペットが傷ついているのを見たとき、どんな気持ちになりますか？",
+      en: "e.g. Think about how you'd feel watching slaughterhouse footage, or seeing an injured pet.",
+    },
     options: [
       { text: { ja: "非常に強い感情を感じる", en: "Very strong emotional response" }, scores: { D4: 3, D2: 1 } },
       { text: { ja: "強い感情を感じる", en: "Strong emotional response" }, scores: { D4: 2 } },
@@ -219,6 +263,10 @@ const quizQuestions = [
     question: {
       ja: "「たとえ一人の行動が全体の状況を大きく変えなくても、正しいと思うことはすべきだ」という考えに同意しますか？",
       en: "Do you agree that you should do what you believe is right, even if one person's actions won't significantly change the overall situation?",
+    },
+    hint: {
+      ja: "例えば、「自分一人が肉をやめても何も変わらない」と言われても、あなたはそれでもやめますか？",
+      en: "e.g. Even if someone says 'one person quitting meat changes nothing,' would you still quit?",
     },
     options: [
       { text: { ja: "強く同意する", en: "Strongly agree" }, scores: { D3: 3, D7: 1 } },

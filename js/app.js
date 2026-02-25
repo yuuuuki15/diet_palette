@@ -53,6 +53,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.getElementById("question-text").textContent = q.question[lang];
 
+    const hintEl = document.getElementById("question-hint");
+    if (q.hint && q.hint[lang]) {
+      hintEl.textContent = q.hint[lang];
+      hintEl.style.display = "";
+    } else {
+      hintEl.textContent = "";
+      hintEl.style.display = "none";
+    }
+
     const optionsContainer = document.getElementById("options-container");
     optionsContainer.innerHTML = "";
 
