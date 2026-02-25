@@ -11,32 +11,25 @@ const MAX_POSSIBLE = {
   D7: 5,  // Q3(+1) + Q9(+3) + Q12(+1)
 };
 
-// Reference profile vectors for each dietary philosophy [D1..D7]
-// Based on literature: S1-S16
+// 4 dietary profiles in 7D ethical space
+// Vegetarian merges former vegetarian + pescatarian profiles
+// Reducetarian is a single representative level
 const PROFILES = {
   vegan:             { D1: 0.90, D2: 0.95, D3: 0.70, D4: 0.85, D5: 0.85, D6: 0.80, D7: 0.90 },
-  vegetarian:        { D1: 0.75, D2: 0.70, D3: 0.65, D4: 0.75, D5: 0.70, D6: 0.65, D7: 0.75 },
-  pescatarian:       { D1: 0.60, D2: 0.40, D3: 0.55, D4: 0.60, D5: 0.75, D6: 0.55, D7: 0.65 },
-  reducetarianHigh:  { D1: 0.70, D2: 0.50, D3: 0.80, D4: 0.70, D5: 0.80, D6: 0.60, D7: 0.60 },
-  reducetarianMid:   { D1: 0.55, D2: 0.35, D3: 0.65, D4: 0.55, D5: 0.60, D6: 0.45, D7: 0.50 },
-  reducetarianLow:   { D1: 0.40, D2: 0.20, D3: 0.50, D4: 0.40, D5: 0.45, D6: 0.30, D7: 0.35 },
+  vegetarian:        { D1: 0.68, D2: 0.55, D3: 0.60, D4: 0.68, D5: 0.73, D6: 0.60, D7: 0.70 },
+  reducetarian:      { D1: 0.55, D2: 0.35, D3: 0.65, D4: 0.55, D5: 0.65, D6: 0.45, D7: 0.50 },
   consciousOmnivore: { D1: 0.25, D2: 0.10, D3: 0.40, D4: 0.30, D5: 0.30, D6: 0.20, D7: 0.25 },
 };
 
-// CO2 data per dietary profile (kg CO2/day, % reduction vs omnivore baseline 3.8 kg/day)
+// CO2 data per profile (kg CO2/day, baseline omnivore = 3.8 kg/day)
 const CO2_DATA = {
   vegan:             { daily: 2.1, reductionPercent: 45 },
-  vegetarian:        { daily: 2.6, reductionPercent: 32 },
-  pescatarian:       { daily: 3.2, reductionPercent: 16 },
-  reducetarianHigh:  { daily: 2.8, reductionPercent: 26 },
-  reducetarianMid:   { daily: 3.3, reductionPercent: 13 },
-  reducetarianLow:   { daily: 3.5, reductionPercent: 8 },
+  vegetarian:        { daily: 2.9, reductionPercent: 24 },
+  reducetarian:      { daily: 3.3, reductionPercent: 13 },
   consciousOmnivore: { daily: 3.7, reductionPercent: 3 },
 };
 
-// 12 Questions based on the ethical framework design document
-// Each option has scores: { D1:±n, D2:±n, ... }
-// Sources: [S1]-[S16]
+// 12 Questions — unchanged from design document
 const quizQuestions = [
   // Q1: Utilitarian Orientation [S1, S7]
   {
@@ -68,22 +61,10 @@ const quizQuestions = [
       en: "Do you believe that any being with consciousness and the capacity to feel has inherent rights that should not be violated, regardless of intelligence?",
     },
     options: [
-      {
-        text: { ja: "強く同意する", en: "Strongly agree" },
-        scores: { D2: 3, D4: 1 },
-      },
-      {
-        text: { ja: "同意する", en: "Agree" },
-        scores: { D2: 2 },
-      },
-      {
-        text: { ja: "どちらとも言えない", en: "Neither agree nor disagree" },
-        scores: {},
-      },
-      {
-        text: { ja: "同意しない", en: "Disagree" },
-        scores: { D2: -2 },
-      },
+      { text: { ja: "強く同意する", en: "Strongly agree" }, scores: { D2: 3, D4: 1 } },
+      { text: { ja: "同意する", en: "Agree" }, scores: { D2: 2 } },
+      { text: { ja: "どちらとも言えない", en: "Neither agree nor disagree" }, scores: {} },
+      { text: { ja: "同意しない", en: "Disagree" }, scores: { D2: -2 } },
     ],
   },
   // Q3: Virtue Ethics Orientation [S6, S11, S13]
@@ -94,22 +75,10 @@ const quizQuestions = [
       en: "To what extent do you agree that your small, everyday actions shape your character and moral quality?",
     },
     options: [
-      {
-        text: { ja: "強く同意する", en: "Strongly agree" },
-        scores: { D3: 3, D7: 1 },
-      },
-      {
-        text: { ja: "同意する", en: "Agree" },
-        scores: { D3: 2 },
-      },
-      {
-        text: { ja: "どちらとも言えない", en: "Neither agree nor disagree" },
-        scores: {},
-      },
-      {
-        text: { ja: "同意しない", en: "Disagree" },
-        scores: { D3: -2 },
-      },
+      { text: { ja: "強く同意する", en: "Strongly agree" }, scores: { D3: 3, D7: 1 } },
+      { text: { ja: "同意する", en: "Agree" }, scores: { D3: 2 } },
+      { text: { ja: "どちらとも言えない", en: "Neither agree nor disagree" }, scores: {} },
+      { text: { ja: "同意しない", en: "Disagree" }, scores: { D3: -2 } },
     ],
   },
   // Q4: Ecocentric Orientation [S4, S5]
@@ -120,22 +89,10 @@ const quizQuestions = [
       en: "Do you believe that the natural environment and ecosystems have inherent value independent of human benefit?",
     },
     options: [
-      {
-        text: { ja: "強く同意する", en: "Strongly agree" },
-        scores: { D5: 3 },
-      },
-      {
-        text: { ja: "同意する", en: "Agree" },
-        scores: { D5: 2 },
-      },
-      {
-        text: { ja: "どちらとも言えない", en: "Neither agree nor disagree" },
-        scores: {},
-      },
-      {
-        text: { ja: "同意しない", en: "Disagree" },
-        scores: { D5: -2 },
-      },
+      { text: { ja: "強く同意する", en: "Strongly agree" }, scores: { D5: 3 } },
+      { text: { ja: "同意する", en: "Agree" }, scores: { D5: 2 } },
+      { text: { ja: "どちらとも言えない", en: "Neither agree nor disagree" }, scores: {} },
+      { text: { ja: "同意しない", en: "Disagree" }, scores: { D5: -2 } },
     ],
   },
   // Q5: Intergenerational Justice [S4, S5, S10]
@@ -146,22 +103,10 @@ const quizQuestions = [
       en: "To what extent do you agree that the current generation should make sacrifices for the sake of future generations, given limited resources?",
     },
     options: [
-      {
-        text: { ja: "強く同意する", en: "Strongly agree" },
-        scores: { D5: 2, D6: 2 },
-      },
-      {
-        text: { ja: "同意する", en: "Agree" },
-        scores: { D5: 1, D6: 1 },
-      },
-      {
-        text: { ja: "どちらとも言えない", en: "Neither agree nor disagree" },
-        scores: {},
-      },
-      {
-        text: { ja: "同意しない", en: "Disagree" },
-        scores: { D5: -1, D6: -1 },
-      },
+      { text: { ja: "強く同意する", en: "Strongly agree" }, scores: { D5: 2, D6: 2 } },
+      { text: { ja: "同意する", en: "Agree" }, scores: { D5: 1, D6: 1 } },
+      { text: { ja: "どちらとも言えない", en: "Neither agree nor disagree" }, scores: {} },
+      { text: { ja: "同意しない", en: "Disagree" }, scores: { D5: -1, D6: -1 } },
     ],
   },
   // Q6: Care Ethics vs Universalism [S3, S12, S15]
@@ -172,18 +117,9 @@ const quizQuestions = [
       en: "Do you feel that the suffering of those close to you and the suffering of distant strangers are equally important?",
     },
     options: [
-      {
-        text: { ja: "同じくらい重要だと感じる", en: "I feel they are equally important" },
-        scores: { D1: 2, D4: 1 },
-      },
-      {
-        text: { ja: "関係が近い存在の方が重要", en: "Those closer to me matter more" },
-        scores: { D4: 2 },
-      },
-      {
-        text: { ja: "状況によると思う", en: "It depends on the situation" },
-        scores: { D4: 1, D3: 1 },
-      },
+      { text: { ja: "同じくらい重要だと感じる", en: "I feel they are equally important" }, scores: { D1: 2, D4: 1 } },
+      { text: { ja: "関係が近い存在の方が重要", en: "Those closer to me matter more" }, scores: { D4: 2 } },
+      { text: { ja: "状況によると思う", en: "It depends on the situation" }, scores: { D4: 1, D3: 1 } },
     ],
   },
   // Q7: Consequentialism vs Deontology [S1, S2, S6, S7]
@@ -194,18 +130,9 @@ const quizQuestions = [
       en: "Do you believe that if an action produces good results, then the rightness of the action itself need not be questioned?",
     },
     options: [
-      {
-        text: { ja: "同意する（結果が大切）", en: "Agree (results matter most)" },
-        scores: { D1: 2 },
-      },
-      {
-        text: { ja: "同意しない（行動自体の正しさが大切）", en: "Disagree (the action itself must be right)" },
-        scores: { D2: 2, D3: 1 },
-      },
-      {
-        text: { ja: "どちらとも言えない", en: "Neither agree nor disagree" },
-        scores: { D1: 1, D2: 1 },
-      },
+      { text: { ja: "同意する（結果が大切）", en: "Agree (results matter most)" }, scores: { D1: 2 } },
+      { text: { ja: "同意しない（行動自体の正しさが大切）", en: "Disagree (the action itself must be right)" }, scores: { D2: 2, D3: 1 } },
+      { text: { ja: "どちらとも言えない", en: "Neither agree nor disagree" }, scores: { D1: 1, D2: 1 } },
     ],
   },
   // Q8: Anthropocentrism Scale [S1, S2, S4, S6]
@@ -216,22 +143,10 @@ const quizQuestions = [
       en: "When human health benefits conflict with animal welfare, which do you prioritize?",
     },
     options: [
-      {
-        text: { ja: "常に人間を優先する", en: "Always prioritize humans" },
-        scores: { D2: -2 },
-      },
-      {
-        text: { ja: "通常は人間を優先する", en: "Usually prioritize humans" },
-        scores: { D2: -1 },
-      },
-      {
-        text: { ja: "状況に応じて判断する", en: "Judge on a case-by-case basis" },
-        scores: { D2: 1, D1: 1 },
-      },
-      {
-        text: { ja: "動物の福祉も同等に考慮する", en: "Consider animal welfare equally" },
-        scores: { D2: 3, D4: 1 },
-      },
+      { text: { ja: "常に人間を優先する", en: "Always prioritize humans" }, scores: { D2: -2 } },
+      { text: { ja: "通常は人間を優先する", en: "Usually prioritize humans" }, scores: { D2: -1 } },
+      { text: { ja: "状況に応じて判断する", en: "Judge on a case-by-case basis" }, scores: { D2: 1, D1: 1 } },
+      { text: { ja: "動物の福祉も同等に考慮する", en: "Consider animal welfare equally" }, scores: { D2: 3, D4: 1 } },
     ],
   },
   // Q9: Environmental Action Readiness [S5, S9, S10, S16]
@@ -242,22 +157,10 @@ const quizQuestions = [
       en: "If you learned that food production is a major driver of climate change, would that be sufficient reason to change your diet?",
     },
     options: [
-      {
-        text: { ja: "すぐに食事を変える", en: "I would change my diet immediately" },
-        scores: { D5: 2, D7: 3 },
-      },
-      {
-        text: { ja: "少しずつ減らしていく", en: "I would gradually reduce" },
-        scores: { D5: 1, D7: 2 },
-      },
-      {
-        text: { ja: "考えるが、すぐには変えない", en: "I would consider it, but not change right away" },
-        scores: { D5: 1, D7: 1 },
-      },
-      {
-        text: { ja: "食事は変えないと思う", en: "I don't think I would change my diet" },
-        scores: { D7: -2 },
-      },
+      { text: { ja: "すぐに食事を変える", en: "I would change my diet immediately" }, scores: { D5: 2, D7: 3 } },
+      { text: { ja: "少しずつ減らしていく", en: "I would gradually reduce" }, scores: { D5: 1, D7: 2 } },
+      { text: { ja: "考えるが、すぐには変えない", en: "I would consider it, but not change right away" }, scores: { D5: 1, D7: 1 } },
+      { text: { ja: "食事は変えないと思う", en: "I don't think I would change my diet" }, scores: { D7: -2 } },
     ],
   },
   // Q10: Autonomy vs Social Responsibility [S5, S11, S13]
@@ -268,22 +171,10 @@ const quizQuestions = [
       en: "To what extent do you agree that eating is a personal freedom and others should not interfere?",
     },
     options: [
-      {
-        text: { ja: "強く同意する", en: "Strongly agree" },
-        scores: { D6: -2 },
-      },
-      {
-        text: { ja: "同意する", en: "Agree" },
-        scores: { D6: -1 },
-      },
-      {
-        text: { ja: "どちらとも言えない", en: "Neither agree nor disagree" },
-        scores: {},
-      },
-      {
-        text: { ja: "同意しない（食は公共の問題でもある）", en: "Disagree (food is also a public issue)" },
-        scores: { D6: 2, D5: 1 },
-      },
+      { text: { ja: "強く同意する", en: "Strongly agree" }, scores: { D6: -2 } },
+      { text: { ja: "同意する", en: "Agree" }, scores: { D6: -1 } },
+      { text: { ja: "どちらとも言えない", en: "Neither agree nor disagree" }, scores: {} },
+      { text: { ja: "同意しない（食は公共の問題でもある）", en: "Disagree (food is also a public issue)" }, scores: { D6: 2, D5: 1 } },
     ],
   },
   // Q11: Empathic Sensitivity [S3, S12, S15]
@@ -294,22 +185,10 @@ const quizQuestions = [
       en: "How strong is your emotional response when you see animals suffering?",
     },
     options: [
-      {
-        text: { ja: "非常に強い感情を感じる", en: "Very strong emotional response" },
-        scores: { D4: 3, D2: 1 },
-      },
-      {
-        text: { ja: "強い感情を感じる", en: "Strong emotional response" },
-        scores: { D4: 2 },
-      },
-      {
-        text: { ja: "ある程度感じる", en: "Somewhat" },
-        scores: {},
-      },
-      {
-        text: { ja: "あまり感じない", en: "Not much" },
-        scores: { D4: -2 },
-      },
+      { text: { ja: "非常に強い感情を感じる", en: "Very strong emotional response" }, scores: { D4: 3, D2: 1 } },
+      { text: { ja: "強い感情を感じる", en: "Strong emotional response" }, scores: { D4: 2 } },
+      { text: { ja: "ある程度感じる", en: "Somewhat" }, scores: {} },
+      { text: { ja: "あまり感じない", en: "Not much" }, scores: { D4: -2 } },
     ],
   },
   // Q12: Moral Motivation Strength [S2, S6, S13, S16]
@@ -320,30 +199,16 @@ const quizQuestions = [
       en: "Do you agree that you should do what you believe is right, even if one person's actions won't significantly change the overall situation?",
     },
     options: [
-      {
-        text: { ja: "強く同意する", en: "Strongly agree" },
-        scores: { D3: 3, D7: 1 },
-      },
-      {
-        text: { ja: "同意する", en: "Agree" },
-        scores: { D3: 2, D7: 1 },
-      },
-      {
-        text: { ja: "どちらとも言えない", en: "Neither agree nor disagree" },
-        scores: {},
-      },
-      {
-        text: { ja: "同意しない", en: "Disagree" },
-        scores: { D3: -1, D7: -2 },
-      },
+      { text: { ja: "強く同意する", en: "Strongly agree" }, scores: { D3: 3, D7: 1 } },
+      { text: { ja: "同意する", en: "Agree" }, scores: { D3: 2, D7: 1 } },
+      { text: { ja: "どちらとも言えない", en: "Neither agree nor disagree" }, scores: {} },
+      { text: { ja: "同意しない", en: "Disagree" }, scores: { D3: -1, D7: -2 } },
     ],
   },
 ];
 
 /**
  * Calculate normalized 7-dimension user vector from answers.
- * answers: array of option indices (one per question, null if unanswered)
- * Returns: { D1: 0.0-1.0, ..., D7: 0.0-1.0 }
  */
 function calculateUserVector(answers) {
   const raw = { D1: 0, D2: 0, D3: 0, D4: 0, D5: 0, D6: 0, D7: 0 };
@@ -364,34 +229,29 @@ function calculateUserVector(answers) {
 }
 
 /**
- * Cosine similarity between two 7D vectors.
- * Returns value between 0 and 1 (clamped, since all normalized values are >= 0).
+ * Gaussian similarity based on Euclidean distance.
+ * sim = exp(-K * ||A - B||^2)
+ * K=1.5 gives good spread across diverse user profiles.
  */
-function cosineSimilarity(vecA, vecB) {
-  let dot = 0;
-  let magA = 0;
-  let magB = 0;
+function gaussianSimilarity(vecA, vecB) {
+  const K = 1.5;
+  let distSq = 0;
   for (const dim of DIMENSIONS) {
-    dot += vecA[dim] * vecB[dim];
-    magA += vecA[dim] * vecA[dim];
-    magB += vecB[dim] * vecB[dim];
+    const diff = (vecA[dim] || 0) - (vecB[dim] || 0);
+    distSq += diff * diff;
   }
-  magA = Math.sqrt(magA);
-  magB = Math.sqrt(magB);
-  if (magA === 0 || magB === 0) return 0;
-  return dot / (magA * magB);
+  return Math.exp(-K * distSq);
 }
 
 /**
  * Calculate similarity percentages against all profiles.
- * Returns sorted array of { key, similarity } objects.
  */
 function calculateResults(answers) {
   const userVector = calculateUserVector(answers);
 
   const results = Object.entries(PROFILES).map(([key, profile]) => ({
     key,
-    similarity: Math.round(cosineSimilarity(userVector, profile) * 100),
+    similarity: Math.round(gaussianSimilarity(userVector, profile) * 100),
   }));
 
   results.sort((a, b) => b.similarity - a.similarity);
@@ -399,8 +259,7 @@ function calculateResults(answers) {
 }
 
 /**
- * Calculate Reducetarian Scale score (0-100).
- * Weighted average of all 7 normalized dimensions.
+ * Reducetarian Scale score (0-100).
  */
 function calculateReducetarianScale(userVector) {
   let sum = 0;

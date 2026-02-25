@@ -25,36 +25,17 @@
             <div class="logo-icon">
               <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="40" cy="40" r="38" stroke="currentColor" stroke-width="2" />
-                <path
-                  d="M25 50 C25 35, 35 20, 40 20 C45 20, 55 35, 55 50 C55 58, 48 62, 40 62 C32 62, 25 58, 25 50Z"
-                  fill="currentColor"
-                  opacity="0.15"
-                />
-                <path
-                  d="M40 20 C40 20, 38 35, 40 50"
-                  stroke="currentColor"
-                  stroke-width="1.5"
-                  stroke-linecap="round"
-                />
-                <path
-                  d="M33 38 C36 36, 40 40, 40 40"
-                  stroke="currentColor"
-                  stroke-width="1.2"
-                  stroke-linecap="round"
-                />
-                <path
-                  d="M47 38 C44 36, 40 40, 40 40"
-                  stroke="currentColor"
-                  stroke-width="1.2"
-                  stroke-linecap="round"
-                />
+                <path d="M25 50 C25 35, 35 20, 40 20 C45 20, 55 35, 55 50 C55 58, 48 62, 40 62 C32 62, 25 58, 25 50Z" fill="currentColor" opacity="0.15" />
+                <path d="M40 20 C40 20, 38 35, 40 50" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                <path d="M33 38 C36 36, 40 40, 40 40" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" />
+                <path d="M47 38 C44 36, 40 40, 40 40" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" />
               </svg>
             </div>
             <h1 data-i18n="appTitle">Diet Pallette</h1>
-            <p class="subtitle" data-i18n="appSubtitle">あなたの食の哲学を可視化する</p>
+            <p class="subtitle" data-i18n="appSubtitle"></p>
           </div>
           <div class="disclaimer" data-i18n="disclaimer"></div>
-          <button id="start-btn" class="primary-btn" data-i18n="startQuiz">診断をはじめる</button>
+          <button id="start-btn" class="primary-btn" data-i18n="startQuiz"></button>
         </div>
       </div>
 
@@ -70,8 +51,8 @@
           <h2 id="question-text" class="question-text"></h2>
           <div id="options-container" class="options-container"></div>
           <div class="nav-buttons">
-            <button id="prev-btn" class="secondary-btn">戻る</button>
-            <button id="next-btn" class="primary-btn" disabled>次へ</button>
+            <button id="prev-btn" class="secondary-btn"></button>
+            <button id="next-btn" class="primary-btn" disabled></button>
           </div>
         </div>
       </div>
@@ -79,12 +60,14 @@
       <!-- Results Screen -->
       <div id="results-screen" class="screen">
         <div class="results-content">
-          <h2 data-i18n="resultTitle" class="results-title">あなたの倫理的プロファイル</h2>
+          <h2 data-i18n="resultTitle" class="results-title"></h2>
 
           <!-- Radar Chart -->
           <div class="radar-section">
             <div id="radar-chart" class="radar-chart"></div>
             <div id="radar-legend" class="radar-legend"></div>
+            <p class="compare-hint" data-i18n="compareLabel"></p>
+            <div id="profile-selectors" class="profile-selectors"></div>
           </div>
 
           <!-- Top Match -->
@@ -98,7 +81,7 @@
           </div>
 
           <!-- All Matches -->
-          <h3 id="all-matches-label" class="section-label" data-i18n="allMatchesLabel"></h3>
+          <h3 data-i18n="allMatchesLabel" class="section-label"></h3>
           <div id="result-bars" class="result-bars"></div>
 
           <!-- Reducetarian Scale -->
@@ -109,10 +92,7 @@
               <div id="scale-fill" class="scale-fill"></div>
               <div id="scale-marker" class="scale-marker"></div>
             </div>
-            <div class="scale-labels">
-              <span>0%</span>
-              <span>100%</span>
-            </div>
+            <div class="scale-labels"><span>0%</span><span>100%</span></div>
           </div>
 
           <!-- Environmental Impact -->
@@ -128,8 +108,30 @@
           </div>
 
           <div class="result-actions">
-            <button id="share-btn" class="secondary-btn" data-i18n="shareText">結果をシェア</button>
-            <button id="retry-btn" class="primary-btn" data-i18n="retryQuiz">もう一度やり直す</button>
+            <button id="share-btn" class="secondary-btn" data-i18n="shareText"></button>
+            <button id="about-btn" class="secondary-btn" data-i18n="aboutQuiz"></button>
+            <button id="retry-btn" class="primary-btn" data-i18n="retryQuiz"></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- References Screen -->
+      <div id="references-screen" class="screen">
+        <div class="references-content">
+          <h2 id="ref-page-title" class="results-title"></h2>
+          <p id="ref-intro" class="ref-intro"></p>
+
+          <h3 id="ref-frameworks-title" class="section-label"></h3>
+          <div id="ref-frameworks" class="ref-frameworks"></div>
+
+          <h3 id="ref-sources-title" class="section-label"></h3>
+          <ol id="ref-sources" class="ref-sources"></ol>
+
+          <h3 id="ref-method-title" class="section-label"></h3>
+          <p id="ref-method-text" class="ref-method-text"></p>
+
+          <div class="result-actions">
+            <button id="back-to-results-btn" class="primary-btn"></button>
           </div>
         </div>
       </div>

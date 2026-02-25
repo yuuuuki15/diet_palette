@@ -91,14 +91,8 @@ header {
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 /* ========== Landing Screen ========== */
@@ -112,9 +106,7 @@ header {
   padding-bottom: 60px;
 }
 
-.logo-area {
-  margin-bottom: 32px;
-}
+.logo-area { margin-bottom: 32px; }
 
 .logo-icon {
   width: 80px;
@@ -123,10 +115,7 @@ header {
   color: var(--color-primary);
 }
 
-.logo-icon svg {
-  width: 100%;
-  height: 100%;
-}
+.logo-icon svg { width: 100%; height: 100%; }
 
 .logo-area h1 {
   font-size: 2rem;
@@ -166,7 +155,6 @@ header {
   color: #fff;
   cursor: pointer;
   transition: all var(--transition);
-  letter-spacing: 0.01em;
 }
 
 .primary-btn:hover:not(:disabled) {
@@ -207,9 +195,7 @@ header {
   padding-bottom: 40px;
 }
 
-.progress-area {
-  margin-bottom: 28px;
-}
+.progress-area { margin-bottom: 28px; }
 
 .question-counter {
   font-size: 0.82rem;
@@ -240,7 +226,6 @@ header {
   font-weight: 600;
   line-height: 1.7;
   margin-bottom: 24px;
-  letter-spacing: -0.01em;
 }
 
 .options-container {
@@ -284,9 +269,7 @@ header {
   gap: 12px;
 }
 
-.nav-buttons .primary-btn {
-  margin-left: auto;
-}
+.nav-buttons .primary-btn { margin-left: auto; }
 
 /* ========== Results Screen ========== */
 .results-content {
@@ -299,7 +282,6 @@ header {
   font-weight: 600;
   color: var(--color-text-secondary);
   margin-bottom: 20px;
-  letter-spacing: 0.02em;
 }
 
 .section-label {
@@ -313,25 +295,20 @@ header {
 }
 
 /* ========== Radar Chart ========== */
-.radar-section {
-  margin-bottom: 24px;
-}
+.radar-section { margin-bottom: 24px; }
 
 .radar-chart {
-  max-width: 340px;
+  max-width: 420px;
   margin: 0 auto;
 }
 
-.radar-chart svg {
-  width: 100%;
-  height: auto;
-}
+.radar-chart svg { width: 100%; height: auto; }
 
 .radar-legend {
   display: flex;
   justify-content: center;
   gap: 20px;
-  margin-top: 8px;
+  margin-top: 4px;
   flex-wrap: wrap;
 }
 
@@ -354,6 +331,64 @@ header {
   background: none !important;
   border-bottom: 2.5px dashed;
   height: 0;
+}
+
+/* ========== Profile Selectors (Comparison) ========== */
+.compare-hint {
+  text-align: center;
+  font-size: 0.78rem;
+  color: var(--color-text-secondary);
+  margin-top: 14px;
+  margin-bottom: 8px;
+}
+
+.profile-selectors {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+
+.profile-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: 1.5px solid var(--color-border);
+  border-radius: 24px;
+  background: var(--color-surface);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: var(--font-sans);
+}
+
+.profile-chip:hover {
+  border-color: var(--color-accent);
+  background: #f8faf9;
+}
+
+.profile-chip.active {
+  border-color: var(--color-primary);
+  background: #e8f5ee;
+}
+
+.chip-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.chip-name {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.chip-sim {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--color-primary);
 }
 
 /* ========== Top Result Card ========== */
@@ -421,16 +456,8 @@ header {
   align-items: baseline;
 }
 
-.bar-category {
-  font-size: 0.85rem;
-  font-weight: 500;
-}
-
-.bar-percent {
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--color-text-secondary);
-}
+.bar-category { font-size: 0.85rem; font-weight: 500; }
+.bar-percent { font-size: 0.85rem; font-weight: 600; color: var(--color-text-secondary); }
 
 .bar-track {
   width: 100%;
@@ -448,9 +475,7 @@ header {
 }
 
 /* ========== Reducetarian Scale ========== */
-.reducetarian-section {
-  margin-bottom: 4px;
-}
+.reducetarian-section { margin-bottom: 4px; }
 
 .reducetarian-desc {
   font-size: 0.88rem;
@@ -501,9 +526,7 @@ header {
 }
 
 /* ========== Env Impact ========== */
-.env-section {
-  margin-bottom: 4px;
-}
+.env-section { margin-bottom: 4px; }
 
 .env-desc {
   font-size: 0.88rem;
@@ -546,6 +569,90 @@ header {
   flex-wrap: wrap;
 }
 
+/* ========== References Screen ========== */
+.references-content {
+  flex: 1;
+  padding-bottom: 60px;
+}
+
+.ref-intro {
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+  line-height: 1.7;
+  margin-bottom: 8px;
+}
+
+.ref-frameworks {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.fw-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+}
+
+.fw-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.fw-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.fw-author {
+  font-size: 0.78rem;
+  color: var(--color-text-secondary);
+}
+
+.fw-desc {
+  font-size: 0.82rem;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+}
+
+.ref-sources {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 8px;
+  padding-left: 0;
+}
+
+.ref-source-item {
+  font-size: 0.82rem;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+}
+
+.src-id {
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.ref-method-text {
+  font-size: 0.88rem;
+  color: var(--color-text-secondary);
+  line-height: 1.7;
+  padding: 14px 18px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  margin-bottom: 28px;
+}
+
 /* ========== Toast ========== */
 .toast {
   position: fixed;
@@ -571,32 +678,14 @@ header {
 
 /* ========== Responsive ========== */
 @media (max-width: 480px) {
-  #app {
-    padding: 0 16px;
-  }
-
-  .logo-area h1 {
-    font-size: 1.6rem;
-  }
-
-  .question-text {
-    font-size: 1.02rem;
-  }
-
-  .top-name {
-    font-size: 1.2rem;
-  }
-
-  .top-percent {
-    font-size: 1.5rem;
-  }
-
-  .primary-btn {
-    padding: 12px 32px;
-    font-size: 0.95rem;
-  }
-
-  .radar-chart {
-    max-width: 280px;
-  }
+  #app { padding: 0 16px; }
+  .logo-area h1 { font-size: 1.6rem; }
+  .question-text { font-size: 1.02rem; }
+  .top-name { font-size: 1.2rem; }
+  .top-percent { font-size: 1.5rem; }
+  .primary-btn { padding: 12px 32px; font-size: 0.95rem; }
+  .radar-chart { max-width: 340px; }
+  .profile-chip { padding: 6px 10px; gap: 4px; }
+  .chip-name { font-size: 0.72rem; }
+  .chip-sim { font-size: 0.72rem; }
 }

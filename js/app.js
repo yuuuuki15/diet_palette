@@ -2,20 +2,23 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentQuestion = 0;
   const answers = new Array(quizQuestions.length).fill(null);
 
+  // Persist last results for comparison feature
+  let lastUserVector = null;
+  let lastResults = null;
+  let selectedCompare = null;
+
+  const PROFILE_COLORS = {
+    vegan: "#16a34a",
+    vegetarian: "#0ea5e9",
+    reducetarian: "#f59e0b",
+    consciousOmnivore: "#ef4444",
+  };
+
   const screens = {
     landing: document.getElementById("landing-screen"),
     quiz: document.getElementById("quiz-screen"),
     results: document.getElementById("results-screen"),
-  };
-
-  const PROFILE_COLORS = {
-    vegan: "#16a34a",
-    vegetarian: "#22c55e",
-    pescatarian: "#0ea5e9",
-    reducetarianHigh: "#8b5cf6",
-    reducetarianMid: "#f59e0b",
-    reducetarianLow: "#f97316",
-    consciousOmnivore: "#ef4444",
+    references: document.getElementById("references-screen"),
   };
 
   // ── Screen Management ──
@@ -82,14 +85,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // ── Radar Chart ──
 
-  function renderRadarChart(userVector, matchKey) {
-    const matchProfile = PROFILES[matchKey];
-    const size = 300;
-    const cx = size / 2;
-    const cy = size / 2;
-    const radius = 110;
+  function renderRadarChart(userVector, compareKey) {
+    const compareProfile = PROFILES[compareKey];
+    const w = 460;
+    const h = 400;
+    const cx = 230;
+    const cy = 195;
+    const radius = 115;
     const numAxes = DIMENSIONS.length;
-    const lang = getLang();
 
     const angles = DIMENSIONS.map(
       (_, i) => -Math.PI / 2 + (2 * Math.PI * i) / numAxes
@@ -125,21 +128,22 @@ document.addEventListener("DOMContentLoaded", () => {
     // Axis labels
     let labels = "";
     DIMENSIONS.forEach((d, i) => {
-      const labelDist = radius + 22;
+      const labelDist = radius + 28;
       const pos = pt(angles[i], labelDist);
       let anchor = "middle";
-      if (pos.x < cx - 10) anchor = "end";
-      else if (pos.x > cx + 10) anchor = "start";
+      if (pos.x < cx - 15) anchor = "end";
+      else if (pos.x > cx + 15) anchor = "start";
       labels += `<text x="${pos.x}" y="${pos.y}"
         text-anchor="${anchor}" dominant-baseline="central"
-        font-size="11" font-weight="500" fill="#6b7280"
+        font-size="12" font-weight="500" fill="#6b7280"
         font-family="Inter, Noto Sans JP, sans-serif">${t("dimensions." + d)}</text>`;
     });
 
-    // Match profile polygon
-    const matchPoly = `<polygon points="${polyPoints(matchProfile)}"
-      fill="${PROFILE_COLORS[matchKey]}" fill-opacity="0.1"
-      stroke="${PROFILE_COLORS[matchKey]}" stroke-width="1.5"
+    // Compare profile polygon
+    const color = PROFILE_COLORS[compareKey];
+    const comparePoly = `<polygon points="${polyPoints(compareProfile)}"
+      fill="${color}" fill-opacity="0.1"
+      stroke="${color}" stroke-width="1.5"
       stroke-dasharray="6 3" />`;
 
     // User polygon
@@ -154,34 +158,61 @@ document.addEventListener("DOMContentLoaded", () => {
       dots += `<circle cx="${p.x}" cy="${p.y}" r="3.5" fill="#2d6a4f" />`;
     });
 
-    const svg = `<svg viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">
-      ${gridLines}${axisLines}${matchPoly}${userPoly}${dots}${labels}
+    const svg = `<svg viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg">
+      ${gridLines}${axisLines}${comparePoly}${userPoly}${dots}${labels}
     </svg>`;
 
     document.getElementById("radar-chart").innerHTML = svg;
 
     // Legend
-    const legend = document.getElementById("radar-legend");
-    legend.innerHTML = `
+    document.getElementById("radar-legend").innerHTML = `
       <span class="legend-item">
         <span class="legend-swatch" style="background:#2d6a4f"></span>
         ${t("radarYou")}
       </span>
       <span class="legend-item">
-        <span class="legend-swatch legend-dashed" style="border-color:${PROFILE_COLORS[matchKey]}"></span>
-        ${t("radarMatch")}: ${t("categories." + matchKey)}
+        <span class="legend-swatch legend-dashed" style="border-color:${color}"></span>
+        ${t("radarMatch")}: ${t("categories." + compareKey)}
       </span>
     `;
+  }
+
+  // ── Profile Selectors (Comparison Feature) ──
+
+  function renderProfileSelectors(results, activeKey) {
+    const container = document.getElementById("profile-selectors");
+    container.innerHTML = "";
+
+    results.forEach(({ key, similarity }) => {
+      const btn = document.createElement("button");
+      btn.className = "profile-chip" + (key === activeKey ? " active" : "");
+      const color = PROFILE_COLORS[key];
+      btn.innerHTML = `
+        <span class="chip-dot" style="background:${color}"></span>
+        <span class="chip-name">${t("categories." + key)}</span>
+        <span class="chip-sim">${similarity}%</span>
+      `;
+      btn.addEventListener("click", () => {
+        selectedCompare = key;
+        renderRadarChart(lastUserVector, key);
+        renderProfileSelectors(lastResults, key);
+      });
+      container.appendChild(btn);
+    });
   }
 
   // ── Results Rendering ──
 
   function renderResults() {
     const { userVector, results } = calculateResults(answers);
+    lastUserVector = userVector;
+    lastResults = results;
     const topMatch = results[0];
+    selectedCompare = topMatch.key;
 
-    // Radar chart
+    // Radar chart + selectors
     renderRadarChart(userVector, topMatch.key);
+    renderProfileSelectors(results, topMatch.key);
 
     // Top match card
     document.getElementById("top-result-label").textContent = t("topResultLabel");
@@ -225,7 +256,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("suggestion-text").textContent =
       t("suggestions." + topMatch.key);
 
-    // Animate bars and scale after render
+    // Animate bars and scale
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         document.querySelectorAll(".bar-fill").forEach((bar) => {
@@ -237,6 +268,46 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // ── References Page ──
+
+  function renderReferences() {
+    const refs = t("references");
+
+    document.getElementById("ref-page-title").textContent = refs.pageTitle;
+    document.getElementById("ref-intro").textContent = refs.introText;
+    document.getElementById("ref-frameworks-title").textContent = refs.frameworksTitle;
+    document.getElementById("ref-sources-title").textContent = refs.sourcesTitle;
+    document.getElementById("ref-method-title").textContent = refs.methodTitle;
+    document.getElementById("ref-method-text").textContent = refs.methodText;
+    document.getElementById("back-to-results-btn").textContent = refs.backToResults;
+
+    // Frameworks
+    const fwContainer = document.getElementById("ref-frameworks");
+    fwContainer.innerHTML = "";
+    refs.frameworks.forEach((fw) => {
+      const card = document.createElement("div");
+      card.className = "fw-card";
+      card.innerHTML = `
+        <div class="fw-header">
+          <span class="fw-name">${fw.name}</span>
+          <span class="fw-author">${fw.author}</span>
+        </div>
+        <p class="fw-desc">${fw.desc}</p>
+      `;
+      fwContainer.appendChild(card);
+    });
+
+    // Sources
+    const srcList = document.getElementById("ref-sources");
+    srcList.innerHTML = "";
+    REFERENCE_SOURCES.forEach((src) => {
+      const li = document.createElement("li");
+      li.className = "ref-source-item";
+      li.innerHTML = `<span class="src-id">[${src.id}]</span> ${src.text}`;
+      srcList.appendChild(li);
+    });
+  }
+
   // ── Events ──
 
   document.getElementById("lang-toggle").addEventListener("click", () => {
@@ -244,6 +315,8 @@ document.addEventListener("DOMContentLoaded", () => {
     updateAllText();
     if (screens.results.classList.contains("active")) {
       renderResults();
+    } else if (screens.references.classList.contains("active")) {
+      renderReferences();
     }
   });
 
@@ -278,11 +351,19 @@ document.addEventListener("DOMContentLoaded", () => {
     showScreen("landing");
   });
 
+  document.getElementById("about-btn").addEventListener("click", () => {
+    renderReferences();
+    showScreen("references");
+  });
+
+  document.getElementById("back-to-results-btn").addEventListener("click", () => {
+    showScreen("results");
+  });
+
   document.getElementById("share-btn").addEventListener("click", () => {
     const { userVector, results } = calculateResults(answers);
     const reductionScore = calculateReducetarianScale(userVector);
-    const top3 = results.slice(0, 3);
-    const lines = top3.map(
+    const lines = results.map(
       ({ key, similarity }) => `${t("categories." + key)}: ${similarity}%`
     );
     const text =
