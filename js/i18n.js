@@ -27,6 +27,7 @@ const translations = {
       "\u74b0\u5883\u3084\u5065\u5eb7\u306b\u914d\u616e\u3057\u305f\u300c\u98df\u7fd2\u6163\u300d\u307e\u3067\u3001\u591a\u69d8\u306a\u30b0\u30e9\u30c7\u30fc\u30b7\u30e7\u30f3\u3092\u53ef\u8996\u5316\u3057\u307e\u3059\u3002" +
       "\u53b3\u5bc6\u306b\u306f\u300c\u601d\u60f3\u300d\u3068\u300c\u7fd2\u6163\u300d\u306f\u7570\u306a\u308b\u3082\u306e\u3067\u3059\u304c\u3001\u3042\u306a\u305f\u306e\u73fe\u5728\u306e\u7acb\u3061\u4f4d\u7f6e\u3092" +
       "\u76f4\u611f\u7684\u306b\u7406\u89e3\u3059\u308b\u305f\u3081\u306e\u6307\u6a19\u3068\u3057\u3066\u3001\u3042\u3048\u3066\u7d71\u5408\u7684\u306a\u30b9\u30b3\u30a2\u3067\u8868\u73fe\u3057\u3066\u3044\u307e\u3059\u3002",
+    quizDuration: "\u6240\u8981\u6642\u9593\uff1a\u7d042\u301c3\u5206",
     startQuiz: "\u8a3a\u65ad\u3092\u306f\u3058\u3081\u308b",
     nextQuestion: "\u6b21\u3078",
     prevQuestion: "\u623b\u308b",
@@ -54,8 +55,8 @@ const translations = {
       D3: "\u5fb3\u502b\u7406\u5b66",
       D4: "\u30b1\u30a2\u502b\u7406",
       D5: "\u74b0\u5883\u502b\u7406",
-      D6: "\u793e\u4f1a\u7684\u8cac\u4efb",
-      D7: "\u884c\u52d5\u5909\u5bb9",
+      D6: "\u60d1\u661f\u5065\u5eb7",
+      D7: "\u30ea\u30c7\u30e5\u30fc\u30b9\u30bf\u30ea\u30a2\u30cb\u30ba\u30e0",
     },
     dimensionInsights: {
       D1: "あなたは行動の結果がもたらす幸福と苦痛の総量を重視しています。より多くの存在の利益を考慮した判断を自然に行う傾向があります。",
@@ -63,19 +64,19 @@ const translations = {
       D3: "あなたは日々の行動が人格を形成するという考えを重視しています。食の選択も含め、品性ある生き方を意識する傾向があります。",
       D4: "あなたは他の存在への共感と関係性を大切にしています。苦しみに対する感受性が高く、ケアの倫理に基づいた判断をする傾向があります。",
       D5: "あなたは生態系や環境の固有の価値を認めています。人間だけでなく地球全体の健全性を考慮した選択を重視しています。",
-      D6: "あなたは食の選択を公共的な問題として捉えています。個人の行動が社会全体に及ぼす影響を意識する傾向があります。",
-      D7: "あなたは倫理的な考えを実際の行動に移す意欲が高い傾向があります。情報に基づいて食生活を見直す柔軟性を持っています。",
+      D6: "あなたは人間の健康と地球環境の両立を重視しています。科学的根拠に基づき、持続可能な食システムを意識する傾向があります。",
+      D7: "あなたは完璧を求めず、現実的に動物性食品を減らしていくアプローチを重視しています。段階的な変化が大きな社会的インパクトをもたらすと考えています。",
     },
     subtypes: {
-      rights: { name: "権利擁護型", desc: "動物の固有の権利を重視し、すべての意識ある存在の尊厳を守ることを食の選択の核としています。" },
-      utilitarian: { name: "功利的提唱型", desc: "苦痛の総量を最小化するという観点からヴィーガニズムを選択。社会的影響力も意識しています。" },
-      ecological: { name: "環境倫理型", desc: "生態系と地球環境への配慮が主な動機。環境負荷の最小化を重視した食の選択です。" },
-      compassion: { name: "共感型", desc: "動物への深い共感と感情的つながりに基づいて、直接的な殺傷を避ける食の選択をしています。" },
-      environmental: { name: "環境・健康型", desc: "環境への影響と合理的判断に基づいた実践的なアプローチ。健康と環境のバランスを重視しています。" },
-      strategic: { name: "戦略型", desc: "社会全体のインパクトを最大化するために、多くの人が実践可能なアプローチを選択。段階的な変化の力を信じています。" },
+      rights: { name: "権利擁護型", desc: "動物は人間の目的のための手段ではなく、固有の権利を持つ存在であるという信念に基づき、あらゆる搾取の拒否を食の選択の核としています。" },
+      utilitarian: { name: "苦痛最小化型", desc: "感覚を持つすべての存在の苦痛を平等に考慮し、その総量を最小化する視点からビーガニズムを実践しています。" },
+      ecological: { name: "環境配慮型", desc: "搾取のない生き方を基盤としつつ、生態系への負荷低減も重要な動機としています。動物と環境の両方への配慮が一体となった選択です。" },
+      compassion: { name: "共感型", desc: "動物への深い共感に基づき、肉食を避ける食の選択をしています。倫理的・健康的・環境的な動機が複合的に関わっています。" },
+      environmental: { name: "環境・健康型", desc: "環境負荷の低減や自身の健康を主な動機として、植物性食品を中心とした食生活を実践しています。" },
+      strategic: { name: "戦略型", desc: "社会全体の動物性食品消費を減らすため、多くの人が参加できる現実的なアプローチを選択。結果としての総削減量を重視しています。" },
       virtue: { name: "徳実践型", desc: "「完璧でなくても、より良い選択を積み重ねる」という姿勢。日々の実践が品性を形作ると考えています。" },
       starter: { name: "入門型", desc: "食の倫理について考え始めたばかりの段階。これからの探求と成長の可能性に満ちています。" },
-      reflective: { name: "内省型", desc: "倫理的な問いに対する意識はありつつも、現在のライフスタイルを維持することを選択。自己認識が高い傾向があります。" },
+      reflective: { name: "内省型", desc: "食の倫理的な問いに関心を持ちつつ、現在のライフスタイルの中で自分なりのバランスを模索しています。" },
       autonomy: { name: "自律重視型", desc: "食の選択は個人の自由であるという価値観を大切にしています。外部からの制約よりも自分自身の判断を重視します。" },
     },
     dimensionInsightsTitle: "あなたの価値観の特徴",
@@ -91,19 +92,19 @@ const translations = {
     },
     categories: {
       vegan: "\u30d3\u30fc\u30ac\u30f3",
-      vegetarian: "\u30d9\u30b8\u30bf\u30ea\u30a2\u30f3",
+      vegetarian: "\u30d9\u30b8\u30bf\u30ea\u30a2\u30f3\u30fb\u30da\u30b9\u30ab\u30bf\u30ea\u30a2\u30f3",
       reducetarian: "\u30ea\u30c7\u30e5\u30fc\u30b9\u30bf\u30ea\u30a2\u30f3",
       consciousOmnivore: "\u610f\u8b58\u7684\u30aa\u30e0\u30cb\u30dc\u30a2",
     },
     categoryDescriptions: {
       vegan:
-        "\u52d5\u7269\u7531\u6765\u306e\u98df\u54c1\u30fb\u88fd\u54c1\u3092\u4e00\u5207\u4f7f\u7528\u3057\u306a\u3044\u751f\u304d\u65b9\u3002\u52d5\u7269\u306e\u6a29\u5229\u3092\u91cd\u8996\u3059\u308b\u601d\u60f3\u306b\u57fa\u3065\u304f\u3002",
+        "\u52d5\u7269\u3078\u306e\u3042\u3089\u3086\u308b\u643e\u53d6\u30fb\u6b8b\u8650\u884c\u70ba\u3092\u6392\u9664\u3057\u3088\u3046\u3068\u3059\u308b\u751f\u304d\u65b9\u306e\u54f2\u5b66\u3002\u98df\u54c1\u3060\u3051\u3067\u306a\u304f\u8863\u670d\u3084\u65e5\u7528\u54c1\u306a\u3069\u3001\u52d5\u7269\u7531\u6765\u306e\u88fd\u54c1\u3092\u53ef\u80fd\u306a\u9650\u308a\u907f\u3051\u308b\u3002",
       vegetarian:
-        "\u8089\u3084\u9b5a\u3092\u907f\u3051\u3001\u690d\u7269\u6027\u98df\u54c1\u3092\u4e2d\u5fc3\u3068\u3057\u305f\u98df\u4e8b\u30b9\u30bf\u30a4\u30eb\u3002\u4e73\u88fd\u54c1\u3084\u5375\u3001\u9b5a\u4ecb\u985e\u306e\u6442\u53d6\u306f\u500b\u4eba\u306e\u5224\u65ad\u306b\u59d4\u306d\u3089\u308c\u308b\u3002",
+        "\u690d\u7269\u6027\u98df\u54c1\u3092\u4e2d\u5fc3\u3068\u3057\u3001\u8089\u3092\u907f\u3051\u308b\u98df\u4e8b\u30b9\u30bf\u30a4\u30eb\u3002\u4e73\u88fd\u54c1\u3084\u5375\u306f\u542b\u3080\u5834\u5408\u3082\u3042\u308b\u3002\u30da\u30b9\u30ab\u30bf\u30ea\u30a2\u30f3\u306f\u9b5a\u4ecb\u985e\u3082\u98df\u3079\u308b\u304c\u3001\u5012\u7406\u7684\u7acb\u3061\u4f4d\u7f6e\u306f\u8fd1\u3044\u3002\u52d5\u7269\u798f\u7949\u3001\u5065\u5eb7\u3001\u74b0\u5883\u306a\u3069\u52d5\u6a5f\u306f\u591a\u69d8\u3002",
       reducetarian:
-        "\u610f\u8b58\u7684\u306b\u52d5\u7269\u6027\u98df\u54c1\u3092\u6e1b\u3089\u3057\u3001\u690d\u7269\u6027\u306e\u98df\u4e8b\u3092\u7a4d\u6975\u7684\u306b\u53d6\u308a\u5165\u308c\u308b\u30b9\u30bf\u30a4\u30eb\u3002\u300c\u5b8c\u74a7\u3067\u306a\u304f\u3066\u3082\u3001\u3088\u308a\u826f\u3044\u9078\u629e\u3092\u7a4d\u307f\u91cd\u306d\u308b\u300d\u3068\u3044\u3046\u54f2\u5b66\u3002",
+        "\u52d5\u7269\u6027\u98df\u54c1\u306e\u6d88\u8cbb\u3092\u610f\u8b58\u7684\u306b\u6e1b\u3089\u3059\u30a2\u30d7\u30ed\u30fc\u30c1\u3002\u300c\u5168\u304b\u7121\u304b\u300d\u3067\u306f\u306a\u304f\u3001\u5404\u500b\u4eba\u304c\u73fe\u72b6\u304b\u3089\u3069\u308c\u3060\u3051\u524a\u6e1b\u3067\u304d\u308b\u304b\u306b\u7740\u76ee\u3057\u3001\u793e\u4f1a\u5168\u4f53\u3067\u306e\u30a4\u30f3\u30d1\u30af\u30c8\u3092\u91cd\u8996\u3059\u308b\u3002",
       consciousOmnivore:
-        "\u7279\u5b9a\u306e\u5236\u9650\u306f\u306a\u3044\u304c\u3001\u98df\u306e\u9078\u629e\u306b\u610f\u8b58\u3092\u5411\u3051\u3066\u3044\u308b\u30b9\u30bf\u30a4\u30eb\u3002",
+        "\u7279\u5b9a\u306e\u98df\u4e8b\u5236\u9650\u306f\u8a2d\u3051\u306a\u3044\u304c\u3001\u98df\u306e\u9078\u629e\u304c\u52d5\u7269\u30fb\u74b0\u5883\u30fb\u793e\u4f1a\u306b\u4e0e\u3048\u308b\u5f71\u97ff\u306b\u610f\u8b58\u3092\u5411\u3051\u3066\u3044\u308b\u30b9\u30bf\u30a4\u30eb\u3002",
     },
     suggestions: {
       vegan:
@@ -139,7 +140,7 @@ const translations = {
       sourcesTitle: "\u53c2\u8003\u6587\u732e\u4e00\u89a7",
       methodTitle: "\u6e2c\u5b9a\u65b9\u6cd5",
       methodText:
-        "12\u306e\u8cea\u554f\u304c7\u3064\u306e\u502b\u7406\u7684\u6b21\u5143\uff08\u529f\u5229\u4e3b\u7fa9\u3001\u6a29\u5229\u8ad6\u3001\u5fb3\u502b\u7406\u5b66\u3001\u30b1\u30a2\u502b\u7406\u3001\u74b0\u5883\u502b\u7406\u3001\u793e\u4f1a\u7684\u8cac\u4efb\u3001\u884c\u52d5\u5909\u5bb9\uff09\u3092\u6e2c\u5b9a\u3057\u307e\u3059\u3002" +
+        "12\u306e\u8cea\u554f\u304c7\u3064\u306e\u502b\u7406\u7684\u6b21\u5143\uff08\u529f\u5229\u4e3b\u7fa9\u3001\u6a29\u5229\u8ad6\u3001\u5fb3\u502b\u7406\u5b66\u3001\u30b1\u30a2\u502b\u7406\u3001\u74b0\u5883\u502b\u7406\u3001\u60d1\u661f\u5065\u5eb7\u3001\u30ea\u30c7\u30e5\u30fc\u30b9\u30bf\u30ea\u30a2\u30cb\u30ba\u30e0\uff09\u3092\u6e2c\u5b9a\u3057\u307e\u3059\u3002" +
         "\u3042\u306a\u305f\u306e\u56de\u7b54\u306f7\u6b21\u5143\u7a7a\u9593\u4e0a\u306e\u30d9\u30af\u30c8\u30eb\u3068\u3057\u3066\u7b97\u51fa\u3055\u308c\u3001\u5404\u98df\u751f\u6d3b\u30d7\u30ed\u30d5\u30a1\u30a4\u30eb\u3068\u306e\u30e6\u30fc\u30af\u30ea\u30c3\u30c9\u8ddd\u96e2\u306b\u57fa\u3065\u304f\u30ac\u30a6\u30b9\u985e\u4f3c\u5ea6\u3092\u8a08\u7b97\u3057\u307e\u3059\u3002" +
         "\u5358\u4e00\u30b9\u30b3\u30a2\u3067\u306f\u306a\u304f\u591a\u6b21\u5143\u7684\u306b\u8a55\u4fa1\u3059\u308b\u3053\u3068\u3067\u3001\u77db\u76fe\u3059\u308b\u4fa1\u5024\u89b3\u3082\u6b63\u78ba\u306b\u8868\u73fe\u3067\u304d\u307e\u3059\u3002",
       backToResults: "\u7d50\u679c\u306b\u623b\u308b",
@@ -154,6 +155,7 @@ const translations = {
       "and health. While 'philosophy' and 'habits' are strictly different concepts, " +
       "we intentionally present an integrated score as an intuitive indicator to " +
       "help you understand where you currently stand.",
+    quizDuration: "Estimated time: 2\u20133 minutes",
     startQuiz: "Start Quiz",
     nextQuestion: "Next",
     prevQuestion: "Back",
@@ -181,8 +183,8 @@ const translations = {
       D3: "Virtue",
       D4: "Care",
       D5: "Ecological",
-      D6: "Social",
-      D7: "Action",
+      D6: "Planetary Health",
+      D7: "Reducetarianism",
     },
     dimensionInsights: {
       D1: "You value the total balance of happiness and suffering that actions produce. You naturally tend to consider the interests of the many in your decisions.",
@@ -190,19 +192,19 @@ const translations = {
       D3: "You believe that everyday actions shape character. You tend to be mindful of living with integrity, including through food choices.",
       D4: "You value empathy and relationships with other beings. You have high sensitivity to suffering and tend to make care-based ethical judgments.",
       D5: "You recognize the intrinsic value of ecosystems and the environment. You prioritize choices that consider the health of the entire planet.",
-      D6: "You see food choices as a public issue. You tend to be aware of how individual actions affect society as a whole.",
-      D7: "You have a strong willingness to translate ethical thinking into action. You possess the flexibility to reconsider your diet based on new information.",
+      D6: "You value the alignment of human health with planetary sustainability. You tend to favor evidence-based approaches to building sustainable food systems.",
+      D7: "You favor a pragmatic approach of gradually reducing animal product consumption rather than all-or-nothing. You believe incremental changes across society create meaningful impact.",
     },
     subtypes: {
-      rights: { name: "Rights Advocate", desc: "You prioritize the inherent rights of animals, centering your food choices on protecting the dignity of all sentient beings." },
-      utilitarian: { name: "Utilitarian Advocate", desc: "You choose veganism from a perspective of minimizing total suffering, while also being conscious of social influence." },
-      ecological: { name: "Eco-Vegan", desc: "Your primary motivation is concern for ecosystems and the planet. You prioritize minimizing environmental impact through food choices." },
-      compassion: { name: "Compassion Type", desc: "Your food choices are driven by deep empathy and emotional connection with animals, avoiding direct harm." },
-      environmental: { name: "Eco-Health Type", desc: "A practical approach based on environmental impact and rational judgment, balancing health and ecological concerns." },
-      strategic: { name: "Strategic Type", desc: "You choose an accessible approach to maximize collective social impact. You believe in the power of gradual, widespread change." },
+      rights: { name: "Rights Advocate", desc: "You believe animals have inherent rights and must not be treated as means to human ends. Rejecting all forms of exploitation is at the core of your food choices." },
+      utilitarian: { name: "Suffering Minimizer", desc: "You practice veganism from the perspective of equally considering the suffering of all sentient beings and minimizing total pain." },
+      ecological: { name: "Eco-Conscious Vegan", desc: "While rooted in rejecting exploitation, you also consider reducing ecological impact as an important motivation. Your choices integrate care for both animals and the environment." },
+      compassion: { name: "Compassion Type", desc: "Deep empathy for animals drives your food choices, avoiding meat. Your motivations may also include health, environment, and broader ethical concerns." },
+      environmental: { name: "Eco-Health Type", desc: "Environmental impact reduction and personal health are your primary motivations for a plant-centered diet." },
+      strategic: { name: "Strategic Type", desc: "You choose a realistic approach that many people can adopt, aiming to reduce total animal product consumption across society. You focus on aggregate outcomes." },
       virtue: { name: "Virtue Practitioner", desc: "Your approach is 'better choices, even if not perfect.' You believe daily practice shapes character over time." },
       starter: { name: "Starter Type", desc: "You are just beginning to explore the ethics of food. Full of potential for discovery and growth ahead." },
-      reflective: { name: "Reflective Type", desc: "You are ethically aware but currently choosing to maintain your lifestyle. You tend toward high self-awareness." },
+      reflective: { name: "Reflective Type", desc: "You are interested in ethical questions around food and seeking your own balance within your current lifestyle." },
       autonomy: { name: "Autonomy Type", desc: "You value food choice as personal freedom. You prioritize your own judgment over external expectations." },
     },
     dimensionInsightsTitle: "Your Value Characteristics",
@@ -218,19 +220,19 @@ const translations = {
     },
     categories: {
       vegan: "Vegan",
-      vegetarian: "Vegetarian",
+      vegetarian: "Vegetarian / Pescatarian",
       reducetarian: "Reducetarian",
       consciousOmnivore: "Conscious Omnivore",
     },
     categoryDescriptions: {
       vegan:
-        "A lifestyle that avoids all animal-derived foods and products, based on the philosophy of animal rights.",
+        "A philosophy of living that seeks to exclude all forms of exploitation of, and cruelty to, animals. This extends beyond food to clothing, daily products, and all other areas of life as far as practicable.",
       vegetarian:
-        "A diet centered on plant-based foods, avoiding meat. Dairy, eggs, and fish consumption is left to individual judgment.",
+        "A plant-centered diet that avoids meat. May include dairy and eggs. Pescatarians also eat fish but share a similar ethical stance. Motivations range from animal welfare and health to environmental concerns.",
       reducetarian:
-        "A style that consciously reduces animal products and actively incorporates plant-based meals. The philosophy of \u201cmaking better choices, even if not perfect.\u201d",
+        "An approach of consciously reducing animal product consumption. Rather than all-or-nothing, it focuses on how much each individual can reduce from their current level, prioritizing aggregate societal impact.",
       consciousOmnivore:
-        "No specific restrictions, but mindful attention to food choices and their impact.",
+        "No specific dietary restrictions, but mindful attention to how food choices affect animals, the environment, and society.",
     },
     suggestions: {
       vegan:
@@ -266,7 +268,7 @@ const translations = {
       sourcesTitle: "References",
       methodTitle: "Methodology",
       methodText:
-        "12 questions measure 7 ethical dimensions (Utilitarianism, Rights, Virtue Ethics, Care Ethics, Environmental Ethics, Social Responsibility, Behavioral Change). " +
+        "12 questions measure 7 ethical dimensions (Utilitarianism, Rights, Virtue Ethics, Care Ethics, Environmental Ethics, Planetary Health, Reducetarianism). " +
         "Your answers are computed as a vector in 7-dimensional space, and Gaussian similarity based on Euclidean distance is calculated against each dietary profile. " +
         "By evaluating multi-dimensionally rather than with a single score, even contradictory values can be accurately represented.",
       backToResults: "Back to Results",

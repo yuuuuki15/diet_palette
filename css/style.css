@@ -143,6 +143,13 @@ header {
   text-align: left;
 }
 
+.quiz-duration {
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  margin-bottom: 24px;
+  text-align: center;
+}
+
 /* ========== Buttons ========== */
 .primary-btn {
   font-family: var(--font-sans);

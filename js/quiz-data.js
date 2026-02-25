@@ -15,10 +15,10 @@ const MAX_POSSIBLE = {
 // Vegetarian merges former vegetarian + pescatarian profiles
 // Reducetarian is a single representative level
 const PROFILES = {
-  vegan:             { D1: 0.90, D2: 0.95, D3: 0.70, D4: 0.85, D5: 0.85, D6: 0.80, D7: 0.90 },
-  vegetarian:        { D1: 0.68, D2: 0.55, D3: 0.60, D4: 0.68, D5: 0.73, D6: 0.60, D7: 0.70 },
-  reducetarian:      { D1: 0.55, D2: 0.35, D3: 0.65, D4: 0.55, D5: 0.65, D6: 0.45, D7: 0.50 },
-  consciousOmnivore: { D1: 0.25, D2: 0.10, D3: 0.40, D4: 0.30, D5: 0.30, D6: 0.20, D7: 0.25 },
+  vegan:             { D1: 0.40, D2: 0.95, D3: 0.80, D4: 0.90, D5: 0.70, D6: 0.65, D7: 0.95 },
+  vegetarian:        { D1: 0.50, D2: 0.60, D3: 0.55, D4: 0.70, D5: 0.70, D6: 0.50, D7: 0.65 },
+  reducetarian:      { D1: 0.75, D2: 0.30, D3: 0.55, D4: 0.45, D5: 0.60, D6: 0.55, D7: 0.55 },
+  consciousOmnivore: { D1: 0.30, D2: 0.10, D3: 0.40, D4: 0.30, D5: 0.30, D6: 0.20, D7: 0.25 },
 };
 
 // Subtypes within each dietary category based on ethical motivation
