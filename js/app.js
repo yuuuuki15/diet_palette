@@ -267,24 +267,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // ── Profile-based Suggestion ──
-
-  function getProfileSuggestion(userVector) {
-    const topDims = getTopDimensions(userVector, 1);
-    if (topDims.length === 0) return t("profileSuggestions.general");
-
-    const topDim = topDims[0].dim;
-    const mapping = {
-      D7: "highAction",
-      D2: "highRights",
-      D5: "highEco",
-      D4: "highCare",
-    };
-
-    const suggestionKey = mapping[topDim] || "general";
-    return t("profileSuggestions." + suggestionKey);
-  }
-
   // ── Results Rendering ──
 
   function renderResults(isLanguageSwitch) {
@@ -315,10 +297,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const yearlyReduction = Math.round((3.8 - co2.daily) * 365);
     document.getElementById("env-desc").textContent =
       t("envImpactDesc").replace("{kg}", yearlyReduction);
-
-    // Suggestion (profile-based)
-    document.getElementById("suggestion-text").textContent =
-      getProfileSuggestion(userVector);
 
     // Animate scale
     requestAnimationFrame(() => {
@@ -419,33 +397,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.getElementById("back-to-results-btn").addEventListener("click", () => {
     showScreen("results");
-  });
-
-  document.getElementById("share-btn").addEventListener("click", () => {
-    const { userVector, results } = calculateResults(answers);
-    const reductionScore = calculateReducetarianScale(userVector);
-    const topDims = getTopDimensions(userVector, 3);
-
-    const dimLines = topDims.map(
-      ({ dim, score }) => `${t("dimensions." + dim)}: ${Math.round(score * 100)}%`
-    );
-    const matchLines = results.map(({ key, similarity, subtype }) => {
-      const subtypeName = subtype ? ` (${t("subtypes." + subtype.key).name})` : "";
-      return `${t("categories." + key)}${subtypeName}: ${similarity}%`;
-    });
-
-    const text =
-      `\ud83e\udd57 Diet Pallette - ${t("resultTitle")}\n\n` +
-      `${dimLines.join("\n")}\n\n` +
-      `${matchLines.join("\n")}\n\n` +
-      `${t("reducetarianTitle")}: ${reductionScore}%`;
-
-    navigator.clipboard.writeText(text).then(() => {
-      const toast = document.getElementById("toast");
-      toast.textContent = t("copiedToast");
-      toast.classList.add("show");
-      setTimeout(() => toast.classList.remove("show"), 2000);
-    });
   });
 
   // ── Init ──
