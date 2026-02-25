@@ -546,7 +546,7 @@ header {
 }
 
 /* ========== Env Impact ========== */
-.env-section { margin-bottom: 4px; }
+.env-section { margin-bottom: 32px; }
 
 .env-desc {
   font-size: 0.88rem;
