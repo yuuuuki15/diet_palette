@@ -7,6 +7,36 @@ document.addEventListener("DOMContentLoaded", () => {
   let lastResults = null;
   let selectedCompare = null;
 
+  // Self-identification
+  let selfIdentification = null;
+  let formSubmitted = false;
+
+  // ── Google Forms Config ──
+  // To enable auto-submission, create a Google Form and fill in these values.
+  // 1. Create a Google Form with fields: selfId, topMatch, similarity, D1-D7
+  // 2. Get the form ID from the URL: docs.google.com/forms/d/e/{FORM_ID}/viewform
+  // 3. Get entry IDs by inspecting the form's HTML (each field has entry.XXXXXXX)
+  const GOOGLE_FORMS_CONFIG = {
+    enabled: false,
+    formId: "YOUR_FORM_ID_HERE",
+    fields: {
+      selfId: "entry.000000001",
+      topMatch: "entry.000000002",
+      topMatchSimilarity: "entry.000000003",
+      D1: "entry.000000004",
+      D2: "entry.000000005",
+      D3: "entry.000000006",
+      D4: "entry.000000007",
+      D5: "entry.000000008",
+      D6: "entry.000000009",
+      D7: "entry.000000010",
+    },
+    // URL for the feedback form (separate form, opened in a new tab)
+    feedbackFormUrl: "",
+  };
+
+  const SELF_ID_OPTIONS = ["vegan", "vegetarian", "reducetarian", "omnivore", "unknown"];
+
   const PROFILE_COLORS = {
     vegan: "#16a34a",
     vegetarian: "#0ea5e9",
@@ -16,6 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const screens = {
     landing: document.getElementById("landing-screen"),
+    selfId: document.getElementById("selfid-screen"),
     quiz: document.getElementById("quiz-screen"),
     results: document.getElementById("results-screen"),
     references: document.getElementById("references-screen"),
@@ -34,9 +65,38 @@ document.addEventListener("DOMContentLoaded", () => {
       el.textContent = t(el.dataset.i18n);
     });
     document.getElementById("lang-toggle").textContent = t("langToggle");
+    if (screens.selfId.classList.contains("active")) {
+      renderSelfIdScreen();
+    }
     if (screens.quiz.classList.contains("active")) {
       renderQuestion();
     }
+  }
+
+  // ── Self-Identification Screen ──
+
+  function renderSelfIdScreen() {
+    document.getElementById("selfid-title").textContent = t("selfId.title");
+    document.getElementById("selfid-hint").textContent = t("selfId.hint");
+
+    const container = document.getElementById("selfid-options");
+    container.innerHTML = "";
+
+    SELF_ID_OPTIONS.forEach((key) => {
+      const btn = document.createElement("button");
+      btn.className = "option-btn" + (selfIdentification === key ? " selected" : "");
+      btn.textContent = t("selfId." + key);
+      btn.addEventListener("click", () => {
+        selfIdentification = key;
+        renderSelfIdScreen();
+        setTimeout(() => {
+          currentQuestion = 0;
+          showScreen("quiz");
+          renderQuestion();
+        }, 250);
+      });
+      container.appendChild(btn);
+    });
   }
 
   // ── Quiz Rendering ──
@@ -74,7 +134,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     const prevBtn = document.getElementById("prev-btn");
-    prevBtn.style.display = currentQuestion === 0 ? "none" : "inline-flex";
+    prevBtn.style.display = "inline-flex";
     prevBtn.textContent = t("prevQuestion");
   }
 
@@ -314,6 +374,11 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("scale-marker").style.left = reductionScore + "%";
       });
     });
+
+    // Auto-submit to Google Forms (once per quiz attempt)
+    if (!isLanguageSwitch) {
+      submitToGoogleForms(userVector, results);
+    }
   }
 
   // ── References Page ──
@@ -356,12 +421,40 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // ── Google Forms Auto-Submit ──
+
+  function submitToGoogleForms(userVector, results) {
+    if (!GOOGLE_FORMS_CONFIG.enabled || formSubmitted) return;
+
+    const topMatch = results[0];
+    const fields = GOOGLE_FORMS_CONFIG.fields;
+    const params = new URLSearchParams();
+    params.set(fields.selfId, selfIdentification || "none");
+    params.set(fields.topMatch, topMatch.key);
+    params.set(fields.topMatchSimilarity, String(topMatch.similarity));
+    DIMENSIONS.forEach((d) => {
+      params.set(fields[d], String(Math.round(userVector[d] * 100)));
+    });
+
+    const url = `https://docs.google.com/forms/d/e/${GOOGLE_FORMS_CONFIG.formId}/formResponse`;
+    fetch(url, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: params.toString(),
+    }).catch(() => {});
+
+    formSubmitted = true;
+  }
+
   // ── Events ──
 
   document.getElementById("lang-toggle").addEventListener("click", () => {
     toggleLang();
     updateAllText();
-    if (screens.results.classList.contains("active")) {
+    if (screens.selfId.classList.contains("active")) {
+      renderSelfIdScreen();
+    } else if (screens.results.classList.contains("active")) {
       renderResults(true);
     } else if (screens.references.classList.contains("active")) {
       renderReferences();
@@ -371,20 +464,33 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("start-btn").addEventListener("click", () => {
     currentQuestion = 0;
     answers.fill(null);
-    showScreen("quiz");
-    renderQuestion();
+    selfIdentification = null;
+    formSubmitted = false;
+    showScreen("selfId");
+    renderSelfIdScreen();
   });
 
   document.getElementById("prev-btn").addEventListener("click", () => {
     if (currentQuestion > 0) {
       currentQuestion--;
       renderQuestion();
+    } else {
+      showScreen("selfId");
+      renderSelfIdScreen();
+    }
+  });
+
+  document.getElementById("feedback-btn").addEventListener("click", () => {
+    if (GOOGLE_FORMS_CONFIG.feedbackFormUrl) {
+      window.open(GOOGLE_FORMS_CONFIG.feedbackFormUrl, "_blank");
     }
   });
 
   document.getElementById("retry-btn").addEventListener("click", () => {
     currentQuestion = 0;
     answers.fill(null);
+    selfIdentification = null;
+    formSubmitted = false;
     showScreen("landing");
   });
 
