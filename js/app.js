@@ -74,22 +74,22 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     const prevBtn = document.getElementById("prev-btn");
-    const nextBtn = document.getElementById("next-btn");
-
     prevBtn.style.display = currentQuestion === 0 ? "none" : "inline-flex";
     prevBtn.textContent = t("prevQuestion");
-
-    if (currentQuestion === quizQuestions.length - 1) {
-      nextBtn.textContent = t("seeResults");
-    } else {
-      nextBtn.textContent = t("nextQuestion");
-    }
-    nextBtn.disabled = answers[currentQuestion] === null;
   }
 
   function selectOption(index) {
     answers[currentQuestion] = index;
     renderQuestion();
+    setTimeout(() => {
+      if (currentQuestion < quizQuestions.length - 1) {
+        currentQuestion++;
+        renderQuestion();
+      } else {
+        showScreen("results");
+        renderResults();
+      }
+    }, 250);
   }
 
   // ── Radar Chart ──
@@ -379,17 +379,6 @@ document.addEventListener("DOMContentLoaded", () => {
     if (currentQuestion > 0) {
       currentQuestion--;
       renderQuestion();
-    }
-  });
-
-  document.getElementById("next-btn").addEventListener("click", () => {
-    if (answers[currentQuestion] === null) return;
-    if (currentQuestion < quizQuestions.length - 1) {
-      currentQuestion++;
-      renderQuestion();
-    } else {
-      showScreen("results");
-      renderResults();
     }
   });
 
