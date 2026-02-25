@@ -61,8 +61,8 @@ const quizQuestions = [
       en: "If your actions result in 100 people becoming slightly happier while one person suffers greatly, which matters more?",
     },
     hint: {
-      ja: "例：ある政策が100人の生活を少し良くするが、そのために5人が大きな犠牲を払う——あなたはこの政策を支持しますか？",
-      en: "e.g. A policy slightly improves 100 people's lives, but 5 people pay a heavy price for it — would you support it?",
+      ja: "例：ある政策が100人の生活を少し良くするが、そのために1人が大きな犠牲を払う——あなたはこの政策を支持しますか？",
+      en: "e.g. A policy slightly improves 100 people's lives, but 1 person pays a heavy price for it — would you support it?",
     },
     options: [
       {
