@@ -429,43 +429,17 @@ document.addEventListener("DOMContentLoaded", () => {
     const topMatch = results[0];
     const fields = GOOGLE_FORMS_CONFIG.fields;
 
-    // Build data to submit
-    const data = {
-      [fields.selfId]: selfIdentification || "none",
-      [fields.topMatch]: topMatch.key,
-      [fields.topMatchSimilarity]: String(topMatch.similarity),
-    };
+    const params = new URLSearchParams();
+    params.set(fields.selfId, selfIdentification || "none");
+    params.set(fields.topMatch, topMatch.key);
+    params.set(fields.topMatchSimilarity, String(topMatch.similarity));
     DIMENSIONS.forEach((d) => {
-      data[fields[d]] = String(Math.round(userVector[d] * 100));
+      params.set(fields[d], String(Math.round(userVector[d] * 100)));
     });
 
-    // Use hidden iframe + form submit (more reliable than fetch for Google Forms)
-    const iframe = document.createElement("iframe");
-    iframe.name = "gform-iframe";
-    iframe.style.display = "none";
-    document.body.appendChild(iframe);
-
-    const form = document.createElement("form");
-    form.method = "POST";
-    form.action = `https://docs.google.com/forms/d/e/${GOOGLE_FORMS_CONFIG.formId}/formResponse`;
-    form.target = "gform-iframe";
-
-    Object.entries(data).forEach(([key, value]) => {
-      const input = document.createElement("input");
-      input.type = "hidden";
-      input.name = key;
-      input.value = value;
-      form.appendChild(input);
-    });
-
-    document.body.appendChild(form);
-    form.submit();
-
-    // Clean up after submission
-    setTimeout(() => {
-      form.remove();
-      iframe.remove();
-    }, 5000);
+    // Use Image GET request to submit (no CORS, no iframe needed)
+    const img = new Image();
+    img.src = `https://docs.google.com/forms/d/e/${GOOGLE_FORMS_CONFIG.formId}/formResponse?${params.toString()}&submit=Submit`;
 
     formSubmitted = true;
   }
