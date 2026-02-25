@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // 3. Get entry IDs by inspecting the form's HTML (each field has entry.XXXXXXX)
   const GOOGLE_FORMS_CONFIG = {
     enabled: false,
-    formId: "YOUR_FORM_ID_HERE",
+    formId: "1FAIpQLSfUyG2LAX7R0S69w6OZhEtM0pyx3GLf71rZVP2xT3h6M93hUg",
     fields: {
       selfId: "entry.000000001",
       topMatch: "entry.000000002",
@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
       D7: "entry.000000010",
     },
     // URL for the feedback form (separate form, opened in a new tab)
-    feedbackFormUrl: "",
+    feedbackFormUrl: "https://docs.google.com/forms/d/e/1FAIpQLSc6u9X4lGWDfBi2vztopXXBu-vhART290vekKBuKfGZWgWlVQ/viewform",
   };
 
   const SELF_ID_OPTIONS = ["vegan", "vegetarian", "reducetarian", "omnivore", "unknown"];
