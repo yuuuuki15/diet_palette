@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Diet Pallette</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Inter:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div id="app">
+      <header>
+        <button id="lang-toggle" class="lang-btn" aria-label="Toggle language">EN</button>
+      </header>
+
+      <!-- Landing Screen -->
+      <div id="landing-screen" class="screen active">
+        <div class="landing-content">
+          <div class="logo-area">
+            <div class="logo-icon">
+              <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="40" cy="40" r="38" stroke="currentColor" stroke-width="2" />
+                <path
+                  d="M25 50 C25 35, 35 20, 40 20 C45 20, 55 35, 55 50 C55 58, 48 62, 40 62 C32 62, 25 58, 25 50Z"
+                  fill="currentColor"
+                  opacity="0.15"
+                />
+                <path
+                  d="M40 20 C40 20, 38 35, 40 50"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                />
+                <path
+                  d="M33 38 C36 36, 40 40, 40 40"
+                  stroke="currentColor"
+                  stroke-width="1.2"
+                  stroke-linecap="round"
+                />
+                <path
+                  d="M47 38 C44 36, 40 40, 40 40"
+                  stroke="currentColor"
+                  stroke-width="1.2"
+                  stroke-linecap="round"
+                />
+              </svg>
+            </div>
+            <h1 data-i18n="appTitle">Diet Pallette</h1>
+            <p class="subtitle" data-i18n="appSubtitle">あなたの食の哲学を可視化する</p>
+          </div>
+          <div class="disclaimer" data-i18n="disclaimer"></div>
+          <button id="start-btn" class="primary-btn" data-i18n="startQuiz">診断をはじめる</button>
+        </div>
+      </div>
+
+      <!-- Quiz Screen -->
+      <div id="quiz-screen" class="screen">
+        <div class="quiz-content">
+          <div class="progress-area">
+            <span id="question-counter" class="question-counter"></span>
+            <div class="progress-bar">
+              <div id="progress-fill" class="progress-fill"></div>
+            </div>
+          </div>
+          <h2 id="question-text" class="question-text"></h2>
+          <div id="options-container" class="options-container"></div>
+          <div class="nav-buttons">
+            <button id="prev-btn" class="secondary-btn">戻る</button>
+            <button id="next-btn" class="primary-btn" disabled>次へ</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Results Screen -->
+      <div id="results-screen" class="screen">
+        <div class="results-content">
+          <h2 data-i18n="resultTitle" class="results-title">あなたの食の哲学</h2>
+
+          <div class="top-result-card">
+            <span id="top-result-label" class="top-label"></span>
+            <div class="top-main">
+              <span id="top-result-name" class="top-name"></span>
+              <span id="top-result-percent" class="top-percent"></span>
+            </div>
+            <p id="top-result-desc" class="top-desc"></p>
+          </div>
+
+          <div id="result-bars" class="result-bars"></div>
+
+          <div class="result-actions">
+            <button id="share-btn" class="secondary-btn" data-i18n="shareText">結果をシェア</button>
+            <button id="retry-btn" class="primary-btn" data-i18n="retryQuiz">もう一度やり直す</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="toast" class="toast"></div>
+    </div>
+
+    <script src="js/i18n.js"></script>
+    <script src="js/quiz-data.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>
